@@ -44,10 +44,22 @@ android {
         }
 
         release {
-            storeFile file("../dandanplay.jks")
-            storePassword System.getenv("KEYSTORE_PASS")
-            keyAlias System.getenv("ALIAS_NAME")
-            keyPassword System.getenv("ALIAS_PASS")
+            def propertiesFile = rootProject.file("release.properties")
+            if (propertiesFile.exists()){
+                def releaseProperties = new Properties()
+                releaseProperties.load(new FileInputStream(propertiesFile))
+
+                storeFile file(releaseProperties['KEY_LOCATION'])
+                storePassword releaseProperties['KEYSTORE_PASS']
+                keyAlias releaseProperties['ALIAS_NAME']
+                keyPassword releaseProperties['ALIAS_PASS']
+            }else{
+                storeFile file("../dandanplay.jks")
+                storePassword System.getenv("KEYSTORE_PASS")
+                keyAlias System.getenv("ALIAS_NAME")
+                keyPassword System.getenv("ALIAS_PASS")
+            }
+
         }
     }
 
