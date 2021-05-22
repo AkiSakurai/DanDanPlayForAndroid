@@ -1,5 +1,6 @@
 package com.xyoye.anime_component.ui.fragment.home
 
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -46,8 +47,10 @@ class HomeFragment : BaseFragment<HomeFragmentViewModel, FragmentHomeBinding>() 
                 .navigation()
         }
 
+        dataBinding.banner.visibility = View.GONE
+
         initViewModelObserve()
-        viewModel.getBanners()
+        //viewModel.getBanners()
         viewModel.getWeeklyAnime()
     }
 
