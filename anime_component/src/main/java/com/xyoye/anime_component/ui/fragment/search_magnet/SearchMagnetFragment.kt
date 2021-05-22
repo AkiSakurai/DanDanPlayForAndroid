@@ -1,5 +1,6 @@
 package com.xyoye.anime_component.ui.fragment.search_magnet
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.launcher.ARouter
@@ -38,6 +39,8 @@ class SearchMagnetFragment :
         private const val ACTION_PLAY_SOURCE = 1
         private const val ACTION_COPY_MAGNET = 3
         private const val ACTION_COPY_MAGNET_CONTENT = 4
+        private const val ACTION_OPEN_IN_ANOTHER_APP = 5
+
 
         fun newInstance(searchWord: String?): SearchMagnetFragment {
             val argument = Bundle()
@@ -63,6 +66,11 @@ class SearchMagnetFragment :
             ACTION_COPY_MAGNET_CONTENT,
             "复制完整磁链",
             R.drawable.ic_magnet_copy_content
+        ),
+        SheetActionBean(
+            ACTION_OPEN_IN_ANOTHER_APP,
+            "如另一應用開啓",
+            R.drawable.ic_magnet_download
         )
     )
 
@@ -239,6 +247,14 @@ class SearchMagnetFragment :
                     }
                     magnet.addToClipboard()
                     ToastCenter.showSuccess("磁链信息已复制！")
+                }
+                ACTION_OPEN_IN_ANOTHER_APP -> {
+                    try {
+                        startActivity(Intent.parseUri(magnetLink, Intent.URI_INTENT_SCHEME))
+                    }catch (ignored : Exception)
+                    {
+                        ToastCenter.showError("找不到可用應用")
+                    }
                 }
             }
             return@BottomActionDialog true
