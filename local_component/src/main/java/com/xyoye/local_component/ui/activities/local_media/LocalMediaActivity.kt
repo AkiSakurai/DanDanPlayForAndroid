@@ -1,6 +1,8 @@
 package com.xyoye.local_component.ui.activities.local_media
 
 import android.view.KeyEvent
+import android.view.Menu
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -52,8 +54,9 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
             viewModel.fastPlay()
         }
 
-        viewModel.fileLiveData.observe(this) {
+        viewModel.filteredFileLiveData.observe(this) {
             dataBinding.mediaRv.setData(it)
+
         }
 
         viewModel.folderLiveData.observe(this) {
@@ -87,6 +90,33 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
         dataBinding.refreshLayout.isRefreshing = true
         viewModel.listRoot()
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_media, menu)
+        val view = menu?.findItem(R.id.app_bar_search)?.actionView as SearchView?
+
+        view?.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener,
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.filterLiveData.postValue(newText)
+                return false
+            }
+        })
+
+        viewModel.filterLiveData.observe(this) {
+            if(it == null)
+            {
+                view?.setQuery(null, false)
+                view?.isIconified = true
+            }
+        }
+        return true
+    }
+
+
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

@@ -45,10 +45,39 @@ class LocalMediaViewModel : BaseViewModel() {
     val folderLiveData = MutableLiveData<MutableList<FolderBean>>()
     val fileLiveData = MediatorLiveData<MutableList<VideoEntity>>()
 
+    val filterLiveData = MutableLiveData<String?>()
+    val filteredFileLiveData = MediatorLiveData<MutableList<VideoEntity>>()
+
     val playVideoLiveData = MutableLiveData<PlayParams>()
 
     //临时的文件夹文件live data
     private var folderFileLiveData: LiveData<MutableList<VideoEntity>>? = null
+
+    init {
+        val fileDataObserver = { videoData:MutableList<VideoEntity>?, filter:String? ->
+            val filtered =
+                if (filter != null) {
+                    videoData?.filter {
+                        it.filePath.toLowerCase(Locale.ROOT)
+                            .contains(filter.toLowerCase(Locale.ROOT))
+                    }?.toMutableList()
+                }else
+                {
+                    videoData
+                }
+            if(filtered != null)
+                filteredFileLiveData.postValue(filtered)
+        }
+
+        filteredFileLiveData.addSource(fileLiveData) {
+            if(!inRootFolder.get())
+                fileDataObserver(it, filterLiveData.value)
+        }
+        filteredFileLiveData.addSource(filterLiveData) {
+            if(!inRootFolder.get())
+                fileDataObserver(fileLiveData.value, it)
+        }
+    }
 
     fun fastPlay() {
         viewModelScope.launch {
@@ -71,6 +100,7 @@ class LocalMediaViewModel : BaseViewModel() {
     fun listRoot() {
         inRootFolder.set(true)
         refreshEnableLiveData.postValue(true)
+        filterLiveData.postValue(null)
 
         viewModelScope.launch {
             val refreshSuccess = refreshSystemVideo()
@@ -102,11 +132,13 @@ class LocalMediaViewModel : BaseViewModel() {
         refreshEnableLiveData.postValue(false)
         currentFolderName.set(folderName)
         currentFolderPath.set(folderPath)
+        filterLiveData.postValue(null)
 
         viewModelScope.launch {
             folderFileLiveData?.let {
                 fileLiveData.removeSource(it)
             }
+
             folderFileLiveData = DatabaseManager.instance.getVideoDao().getVideoInFolder(folderPath)
             val lastPlayHistory = queryLastPlayHistory()
             fileLiveData.addSource(folderFileLiveData!!) { videoData ->
