@@ -39,6 +39,9 @@ abstract class BaseVideoController(
     //播放失败回调
     protected var mPlayErrorBlock: (() -> Unit)? = null
 
+    //重啓播放器回调
+    protected var mRestartPlayer: (() -> Unit)? = null
+
     //隐藏视图Runnable
     protected val mFadeOut = Runnable { hideController() }
 
@@ -180,6 +183,10 @@ abstract class BaseVideoController(
         } else if (orientation in 240..300) {
             attachActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         }
+    }
+
+    override fun restart() {
+        mRestartPlayer?.invoke()
     }
 
     @CallSuper

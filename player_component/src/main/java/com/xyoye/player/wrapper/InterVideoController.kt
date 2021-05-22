@@ -57,4 +57,10 @@ interface InterVideoController {
      * 播放器销毁，预留方法
      */
     fun destroy()
+
+    /**
+     * Restart the player
+     */
+    fun restart()
+
 }

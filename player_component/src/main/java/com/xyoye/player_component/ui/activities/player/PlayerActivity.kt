@@ -146,6 +146,17 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 setResult(Activity.RESULT_OK)
                 finish()
             }
+            observerRestart {
+                setResult(Activity.RESULT_OK)
+                finish()
+                val replayParams = params.copy()
+                replayParams.currentPosition = dataBinding.danDanPlayer.getCurrentPosition()
+                ARouter.getInstance()
+                    .build(RouteTable.Player.PlayerCenter)
+                    .withParcelable("playParams", replayParams)
+                    .navigation()
+                finish()
+            }
             //绑定资源
             observerBindSource { sourcePath, isSubtitle ->
                 if (isSubtitle){

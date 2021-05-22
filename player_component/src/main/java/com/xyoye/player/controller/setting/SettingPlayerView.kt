@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.initData
+import com.xyoye.common_component.config.PlayerConfig
 import com.xyoye.common_component.extension.grid
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
@@ -20,6 +21,7 @@ import com.xyoye.common_component.utils.dp2px
 import com.xyoye.data_component.bean.VideoScaleBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
+import com.xyoye.data_component.enums.PlayerType
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.info.PlayerInitializer
@@ -50,6 +52,8 @@ class SettingPlayerView(
         VideoScaleBean(VideoScreenScale.SCREEN_SCALE_CENTER_CROP, "裁剪")
     )
 
+    private val mPlayerTypes = PlayerType.values().toMutableList()
+
     private val audioTrackData = mutableListOf<VideoTrackBean>()
 
     private lateinit var mControlWrapper: ControlWrapper
@@ -75,6 +79,8 @@ class SettingPlayerView(
                 break
             }
         }
+
+        initPlayerType()
 
         initRv()
 
@@ -120,6 +126,36 @@ class SettingPlayerView(
 
     override fun onVideoSizeChanged(videoSize: Point) {
 
+    }
+
+    private fun initPlayerType()
+    {
+        viewBinding.playerTypeRc.apply {
+            layoutManager = vertical()
+
+            adapter = buildAdapter<PlayerType> {
+                addItem<PlayerType, ItemVideoTrackBinding>(R.layout.item_video_track) {
+                    initView { data, position, _ ->
+                        itemBinding.apply {
+                            trackNameTv.text = data.name
+                                .replace("_"," ")
+                                .removePrefix("TYPE")
+                            trackSelectCb.isChecked = PlayerConfig.getUsePlayerType() == data.value
+                            trackLl.setOnClickListener {
+                                switchPlayer(data)
+                                notifyDataSetChanged()
+                            }
+                            trackSelectCb.setOnClickListener {
+                                switchPlayer(data)
+                                notifyDataSetChanged()
+                            }
+                        }
+                    }
+                }
+            }
+
+            setData(mPlayerTypes)
+        }
     }
 
     private fun initRv() {
@@ -248,5 +284,11 @@ class SettingPlayerView(
         viewBinding.audioTrackRv.adapter?.notifyItemChanged(position)
 
         mControlWrapper.selectTrack(audioTrackData[position], deselect)
+    }
+
+    private fun switchPlayer(playerType: PlayerType)
+    {
+        PlayerConfig.putUsePlayerType(playerType.value)
+        mControlWrapper.restart()
     }
 }

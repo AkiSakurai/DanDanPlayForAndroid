@@ -111,6 +111,10 @@ class VideoController(
 
     }
 
+    override fun restart() {
+        mRestartPlayer?.invoke()
+    }
+
     /**
      * 设置视频标题
      */
@@ -153,6 +157,13 @@ class VideoController(
      */
     fun observerPlayError(block: () -> Unit) {
         mPlayErrorBlock = block
+    }
+
+    /**
+     * 重啓播放器
+     */
+    fun observerRestart(block: () -> Unit) {
+        mRestartPlayer = block
     }
 
     /**

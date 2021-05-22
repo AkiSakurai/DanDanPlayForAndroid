@@ -127,6 +127,10 @@ class ControlWrapper(
         mController.destroy()
     }
 
+    override fun restart() {
+        mController.restart()
+    }
+
     /**
      * ------------------Danmu Controller----------------------
      */
