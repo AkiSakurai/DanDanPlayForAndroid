@@ -6,6 +6,16 @@ android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
 
+    flavorDimensions "api"
+    productFlavors {
+        dandanplay {
+
+        }
+        bgm {
+            applicationId "com.xyoye.dandanplay.bgm"
+        }
+    }
+
     defaultConfig {
         applicationId "com.xyoye.dandanplay"
         minSdkVersion rootProject.ext.android.minSdkVersion
