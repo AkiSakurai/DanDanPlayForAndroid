@@ -9,7 +9,7 @@ import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.extension.formatFileName
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
@@ -19,12 +19,18 @@ import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.FileHashUtils
 import com.xyoye.stream_component.utils.PlayHistoryUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Credentials
+import javax.inject.Inject
 
-class WebDavFileViewModel : BaseViewModel() {
+@HiltViewModel
+class WebDavFileViewModel @Inject constructor(
+    val DanmuUtils : DanmuUtilsModule,
+    val Retrofit: RetrofitModule
+)  : BaseViewModel() {
     companion object {
         private const val PATH_ROOT = "/"
     }

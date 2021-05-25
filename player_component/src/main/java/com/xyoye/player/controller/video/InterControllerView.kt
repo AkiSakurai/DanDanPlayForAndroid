@@ -2,8 +2,8 @@ package com.xyoye.player.controller.video
 
 import android.graphics.Point
 import android.view.View
-import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.data_component.enums.PlayState
+import com.xyoye.player.wrapper.ControlWrapper
 
 /**
  * Created by xyoye on 2020/11/1.

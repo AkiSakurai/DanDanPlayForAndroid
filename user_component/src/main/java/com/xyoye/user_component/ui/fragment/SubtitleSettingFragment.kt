@@ -3,7 +3,6 @@ package com.xyoye.user_component.ui.fragment
 import android.os.Bundle
 import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceFragmentCompat
-import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.user_component.R
 

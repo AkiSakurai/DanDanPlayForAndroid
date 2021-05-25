@@ -20,8 +20,10 @@ import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityWebDavFileBinding
 import com.xyoye.stream_component.databinding.ItemStorageFolderBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Stream.WebDavFile)
+@AndroidEntryPoint
 class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileBinding>() {
 
     @Autowired

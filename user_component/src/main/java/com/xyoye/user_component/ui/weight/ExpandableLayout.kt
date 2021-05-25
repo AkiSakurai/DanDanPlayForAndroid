@@ -11,7 +11,6 @@ import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import com.xyoye.user_component.R
 import kotlin.math.max
 import kotlin.math.min

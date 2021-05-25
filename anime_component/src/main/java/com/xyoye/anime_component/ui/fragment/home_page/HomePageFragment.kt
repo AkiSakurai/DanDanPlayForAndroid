@@ -8,8 +8,8 @@ import com.xyoye.anime_component.ui.adapter.AnimeAdapter
 import com.xyoye.common_component.base.BaseAppFragment
 import com.xyoye.common_component.extension.gridEmpty
 import com.xyoye.common_component.extension.setData
-import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.dp2px
+import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.data_component.data.BangumiAnimeData
 
 /**

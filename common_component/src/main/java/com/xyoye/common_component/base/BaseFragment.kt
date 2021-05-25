@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.ViewModelProvider
 import com.xyoye.data_component.helper.Loading
 
@@ -21,7 +22,7 @@ abstract class BaseFragment<VM : BaseViewModel, V : ViewDataBinding> : BaseAppFr
     protected val viewModel: VM by lazy {
         ViewModelProvider(
             viewModelStore,
-            ViewModelProvider.AndroidViewModelFactory(mAttachActivity.application)
+            (this as HasDefaultViewModelProviderFactory).defaultViewModelProviderFactory
         ).get(viewModelInit.clazz)
     }
 

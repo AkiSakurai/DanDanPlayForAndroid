@@ -9,9 +9,8 @@ import android.view.MotionEvent
 import android.view.View
 import com.xyoye.common_component.utils.getScreenWidth
 import com.xyoye.common_component.utils.isScreenEdge
-import com.xyoye.player.controller.video.InterGestureView
 import com.xyoye.data_component.enums.PlayState
-import com.xyoye.player.controller.base.BaseVideoController
+import com.xyoye.player.controller.video.InterGestureView
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min

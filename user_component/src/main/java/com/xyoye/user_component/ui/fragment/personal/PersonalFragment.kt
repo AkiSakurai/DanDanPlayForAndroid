@@ -15,12 +15,14 @@ import com.xyoye.user_component.BR
 import com.xyoye.user_component.R
 import com.xyoye.user_component.databinding.FragmentPersonalBinding
 import com.xyoye.user_component.ui.dialog.UserCoverDialog
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Created by xyoye on 2020/7/28.
  */
 
 @Route(path = RouteTable.User.PersonalFragment)
+@AndroidEntryPoint
 class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersonalBinding>() {
 
     override fun initViewModel() = ViewModelInit(

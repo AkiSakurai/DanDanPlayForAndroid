@@ -6,18 +6,23 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.SubtitleUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.SubDetailData
 import com.xyoye.data_component.data.SubtitleSubData
 import com.xyoye.local_component.utils.SearchSubtitleRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import javax.inject.Inject
 
-class ShooterSubtitleViewModel : BaseViewModel() {
+@HiltViewModel
+class ShooterSubtitleViewModel @Inject constructor(
+    val Retrofit: RetrofitModule
+) : BaseViewModel() {
 
-    private val searchSubtitleRepository = SearchSubtitleRepository(viewModelScope)
+    private val searchSubtitleRepository = SearchSubtitleRepository(Retrofit, viewModelScope)
     val searchSubDetailLiveData = MutableLiveData<SubDetailData>()
 
     val searchSubtitleLiveData = searchSubtitleRepository.subtitleLiveData

@@ -23,8 +23,10 @@ import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivitySmbFileBinding
 import com.xyoye.stream_component.databinding.ItemStorageFolderBinding
 import com.xyoye.stream_component.utils.smb.SMBFile
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Stream.SmbFile)
+@AndroidEntryPoint
 class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>() {
     companion object {
         private const val PLAY_REQUEST_CODE = 1001

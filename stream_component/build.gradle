@@ -5,6 +5,7 @@ if (IS_APPLICATION_RUN.toBoolean()) {
 }
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -77,6 +78,7 @@ dependencies {
     implementation 'com.rapid7.client:dcerpc:0.10.0'
 
     implementation 'com.huawei.hms:scan:1.3.1.300'
-
+    implementation rootProject.ext.dependencies["hilt"]
+    kapt rootProject.ext.dependencies["hilt-compiler"]
     kapt rootProject.ext.dependencies["arouter-compiler"]
 }

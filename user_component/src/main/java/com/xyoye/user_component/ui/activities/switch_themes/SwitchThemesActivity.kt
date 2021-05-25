@@ -1,6 +1,5 @@
 package com.xyoye.user_component.ui.activities.switch_themes
 
-import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatDelegate

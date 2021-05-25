@@ -2,6 +2,7 @@ package com.xyoye.common_component.base
 
 import android.os.Bundle
 import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.ViewModelProvider
 import com.gyf.immersionbar.ImmersionBar
 import com.xyoye.common_component.R
@@ -21,7 +22,7 @@ abstract class BaseActivity<VM : BaseViewModel, V : ViewDataBinding> : BaseAppCo
     protected val viewModel: VM by lazy {
         ViewModelProvider(
             viewModelStore,
-            ViewModelProvider.AndroidViewModelFactory(application)
+            (this as HasDefaultViewModelProviderFactory).defaultViewModelProviderFactory
         ).get(viewModelInit.clazz)
     }
 

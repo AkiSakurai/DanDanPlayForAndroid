@@ -1,7 +1,7 @@
 package com.xyoye.subtitle.format;
 
-import com.xyoye.subtitle.info.Caption;
 import com.xyoye.subtitle.exception.FatalParsingException;
+import com.xyoye.subtitle.info.Caption;
 import com.xyoye.subtitle.info.Style;
 import com.xyoye.subtitle.info.Time;
 import com.xyoye.subtitle.info.TimedTextObject;

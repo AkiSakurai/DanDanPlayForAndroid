@@ -3,7 +3,10 @@ package com.xyoye.common_component.storage.file_system
 import android.os.ParcelFileDescriptor
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.IOUtils
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.InputStream
 
 /**
  * @author gubatron

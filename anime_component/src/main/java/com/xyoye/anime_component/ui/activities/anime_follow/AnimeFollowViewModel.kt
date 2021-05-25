@@ -3,11 +3,16 @@ package com.xyoye.anime_component.ui.activities.anime_follow
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.data_component.data.FollowAnimeData
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class AnimeFollowViewModel : BaseViewModel() {
+@HiltViewModel
+class AnimeFollowViewModel @Inject constructor(
+    val Retrofit: RetrofitModule
+): BaseViewModel() {
     val followLiveData = MutableLiveData<FollowAnimeData>()
 
     fun getUserFollow() {

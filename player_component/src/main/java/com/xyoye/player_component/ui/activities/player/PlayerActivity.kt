@@ -28,9 +28,11 @@ import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player_component.BR
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ActivityPlayerBinding
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
 @Route(path = RouteTable.Player.PlayerCenter)
+@AndroidEntryPoint
 class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     PlayerReceiverListener {
 

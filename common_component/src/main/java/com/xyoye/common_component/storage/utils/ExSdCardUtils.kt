@@ -2,12 +2,10 @@ package com.xyoye.common_component.storage.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.storage.StorageManager
 import androidx.core.content.ContextCompat
 import com.xyoye.common_component.utils.DDLog
 import java.io.File
 import java.io.IOException
-import java.lang.reflect.Array
 
 /**
  * @author gubatron

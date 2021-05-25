@@ -22,9 +22,11 @@ import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityFtpFileBinding
 import com.xyoye.stream_component.databinding.ItemStorageFolderBinding
+import dagger.hilt.android.AndroidEntryPoint
 import org.apache.commons.net.ftp.FTPFile
 
 @Route(path = RouteTable.Stream.FTPFile)
+@AndroidEntryPoint
 class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>() {
     companion object {
         private const val PLAY_REQUEST_CODE = 1001

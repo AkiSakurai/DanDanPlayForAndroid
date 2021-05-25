@@ -15,8 +15,8 @@ import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
-import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player.info.PlayerInitializer
+import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutSettingDanmuBinding
 

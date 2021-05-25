@@ -3,7 +3,10 @@ package com.xyoye.user_component.ui.fragment.scan_filter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseFragment
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.setAutoSizeText
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.setTextColorRes
+import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.getFolderName
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.user_component.BR

@@ -25,8 +25,10 @@ import com.xyoye.local_component.databinding.ItemDanmuSourceBinding
 import com.xyoye.local_component.ui.dialog.DanmuDownloadDialog
 import com.xyoye.local_component.ui.dialog.DanmuSearchDialog
 import com.xyoye.local_component.utils.getAnimeType
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Local.BindDanmu)
+@AndroidEntryPoint
 class BindDanmuActivity : BaseActivity<BindDanmuViewModel, ActivityBindDanmuBinding>() {
 
     @JvmField

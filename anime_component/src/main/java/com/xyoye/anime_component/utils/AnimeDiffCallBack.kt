@@ -1,8 +1,6 @@
 package com.xyoye.anime_component.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import com.xyoye.anime_component.databinding.ItemAnimeBinding
-import com.xyoye.common_component.adapter.BaseAdapter
 import com.xyoye.data_component.data.AnimeData
 
 /**

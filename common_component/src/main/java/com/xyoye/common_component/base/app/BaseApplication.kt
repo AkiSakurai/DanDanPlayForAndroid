@@ -11,7 +11,6 @@ import com.xyoye.common_component.utils.SecurityHelper
 /**
  * Created by xyoye on 2020/4/13.
  */
-
 open class BaseApplication : Application() {
     companion object {
 

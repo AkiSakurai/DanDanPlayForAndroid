@@ -5,6 +5,7 @@ if (IS_APPLICATION_RUN.toBoolean()){
 }
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -35,10 +36,17 @@ android {
         }
     }
 
+    if (IS_APPLICATION_RUN.toBoolean()) {
+        rootProject.ext.configureApp(delegate)
+    }
+
     sourceSets {
         main {
             if (IS_APPLICATION_RUN.toBoolean()){
                 manifest.srcFile 'src/main/app_manifest/AndroidManifest.xml'
+                java{
+                    srcDir 'src/main/app_app'
+                }
             } else {
                 manifest.srcFile 'src/main/AndroidManifest.xml'
             }
@@ -62,13 +70,20 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation rootProject.ext.dependencies["hilt"]
+
     testImplementation rootProject.ext.dependencies["junit"]
     androidTestImplementation rootProject.ext.dependencies["test_junit"]
     androidTestImplementation rootProject.ext.dependencies["test_espresso-core"]
 
     kapt rootProject.ext.dependencies["arouter-compiler"]
+    kapt rootProject.ext.dependencies["hilt-compiler"]
 
     implementation project(path: ':common_component')
+
+    if (IS_APPLICATION_RUN.toBoolean()) {
+        implementation project(path: ':di_component')
+    }
 
     implementation 'com.youth.banner:banner:2.1.0'
 }

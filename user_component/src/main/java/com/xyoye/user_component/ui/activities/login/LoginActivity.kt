@@ -16,8 +16,10 @@ import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.user_component.BR
 import com.xyoye.user_component.R
 import com.xyoye.user_component.databinding.ActivityLoginBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.User.UserLogin)
+@AndroidEntryPoint
 class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
 
     @Autowired

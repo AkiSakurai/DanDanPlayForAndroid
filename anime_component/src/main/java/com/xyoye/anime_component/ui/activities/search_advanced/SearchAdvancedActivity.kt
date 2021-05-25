@@ -1,10 +1,9 @@
 package com.xyoye.anime_component.ui.activities.search_advanced
 
-import com.xyoye.common_component.base.BaseActivity
-
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ActivitySearchAdvancedBinding
+import com.xyoye.common_component.base.BaseActivity
 
 class SearchAdvancedActivity :
     BaseActivity<SearchAdvancedViewModel, ActivitySearchAdvancedBinding>() {

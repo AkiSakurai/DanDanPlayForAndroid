@@ -25,8 +25,10 @@ import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityRemoteFileBinding
 import com.xyoye.stream_component.databinding.ItemRemoteFolderBinding
 import com.xyoye.stream_component.databinding.ItemRemoteVideoBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Stream.RemoteFile)
+@AndroidEntryPoint
 class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileBinding>() {
 
     @Autowired

@@ -3,7 +3,7 @@ ext {
     def RETROFIT_VERSION = "2.9.0"
     def IMMERSION_BAR_VERSION = "3.0.0"
     def EXOPLAYER_VERSION = "2.12.1"
-    def MO_SHI_VERSION = "1.11.0"
+    def MO_SHI_VERSION = "1.12.0"
 
     android = [
             compileSdkVersion: 29,
@@ -60,5 +60,27 @@ ext {
             "exoplayer-rtmp"            : "com.google.android.exoplayer:extension-rtmp:$EXOPLAYER_VERSION",
 
             "immersionbar"              : "com.gyf.immersionbar:immersionbar:$IMMERSION_BAR_VERSION",
+            "inject"                    : "javax.inject:javax.inject:1",
+            "hilt"                      :"com.google.dagger:hilt-android:2.35.1",
+            "hilt-compiler"             :"com.google.dagger:hilt-compiler:2.35.1"
+
     ]
+
+    configureApp =  { callerDelegate ->
+        def closure =  {
+            flavorDimensions "api"
+            productFlavors {
+                dandanplay {
+
+                }
+                bgm {
+                    applicationIdSuffix '.bgm'
+                }
+            }
+        }
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.delegate = callerDelegate
+        closure.call()
+
+    }
 }

@@ -10,9 +10,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.ViewPropertyAnimatorListenerAdapter
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.utils.formatDuration
 import com.xyoye.player.wrapper.ControlWrapper
-import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerGestureBinding
 

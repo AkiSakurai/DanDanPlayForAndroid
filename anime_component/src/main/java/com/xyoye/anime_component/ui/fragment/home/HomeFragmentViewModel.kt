@@ -3,16 +3,21 @@ package com.xyoye.anime_component.ui.fragment.home
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.data_component.data.BangumiAnimeData
 import com.xyoye.data_component.data.BannerData
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 /**
  * Created by xyoye on 2020/7/28.
  */
 
-class HomeFragmentViewModel : BaseViewModel() {
+@HiltViewModel
+class HomeFragmentViewModel @Inject constructor(
+    val Retrofit: RetrofitModule
+) : BaseViewModel() {
     val tabTitles = arrayOf("周日", "周一", "周二", "周三", "周四", "周五", "周六")
     val weeklyAnimeLiveData = MutableLiveData<Array<BangumiAnimeData>>()
     val bannersLiveData = MutableLiveData<BannerData>()

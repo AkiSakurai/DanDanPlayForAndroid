@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
@@ -13,10 +13,16 @@ import com.xyoye.data_component.data.DanmuData
 import com.xyoye.data_component.data.DanmuMatchData
 import com.xyoye.data_component.data.DanmuMatchDetailData
 import com.xyoye.data_component.data.DanmuRelatedData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.File
+import javax.inject.Inject
 
-class BindDanmuViewModel : BaseViewModel() {
+@HiltViewModel
+class BindDanmuViewModel  @Inject constructor(
+    val DanmuUtils : DanmuUtilsModule,
+    val Retrofit: RetrofitModule
+): BaseViewModel() {
 
     val relatedLiveData = MutableLiveData<Pair<DanmuMatchDetailData, DanmuRelatedData>>()
     val sourceLiveData = MutableLiveData<MutableList<DanmuMatchDetailData>>()

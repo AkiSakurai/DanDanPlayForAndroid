@@ -14,8 +14,8 @@ import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.enums.PlayState
-import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player.utils.formatDuration
+import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerBottomBinding
 

@@ -20,7 +20,9 @@ import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
 import com.xyoye.data_component.data.AnimeData
 import com.xyoye.data_component.data.CommonTypeData
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchAnimeFragment :
     BaseFragment<SearchAnimeFragmentViewModel, FragmentSearchAnimeBinding>(), SearchListener {
     private lateinit var animeAdapter: BaseAdapter<AnimeData>

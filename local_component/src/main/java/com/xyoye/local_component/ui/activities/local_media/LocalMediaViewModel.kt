@@ -10,7 +10,7 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.deduplication
 import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.extension.toFile
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.RequestErrorHandler
 import com.xyoye.common_component.resolver.MediaResolver
 import com.xyoye.common_component.utils.*
@@ -22,15 +22,21 @@ import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.local_component.utils.SubtitleHashUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.HashMap
 
-class LocalMediaViewModel : BaseViewModel() {
+@HiltViewModel
+class LocalMediaViewModel @Inject constructor(
+    val DanmuUtils : DanmuUtilsModule,
+    val Retrofit: RetrofitModule
+): BaseViewModel() {
     //当前是否在根目录
     val inRootFolder = ObservableBoolean()
 

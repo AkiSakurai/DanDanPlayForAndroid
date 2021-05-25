@@ -4,11 +4,12 @@ import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ActivityMainBinding
 import com.xyoye.common_component.base.BaseActivity
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Created by xyoye on 2020/7/30.
  */
-
+@AndroidEntryPoint
 class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
     override fun initViewModel() =

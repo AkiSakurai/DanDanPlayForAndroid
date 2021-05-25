@@ -19,12 +19,17 @@ import com.xyoye.stream_component.utils.server.SMBPlayServer
 import com.xyoye.stream_component.utils.smb.SMBException
 import com.xyoye.stream_component.utils.smb.SMBFile
 import com.xyoye.stream_component.utils.smb.v2.SMBJManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class SmbFileViewModel : BaseViewModel() {
+@HiltViewModel
+class SmbFileViewModel @Inject constructor(
+    val DanmuUtils : DanmuUtilsModule,
+)  : BaseViewModel() {
     private val showHiddenFile = AppConfig.isShowHiddenFile()
 
     val fileLiveData = MutableLiveData<MutableList<SMBFile>>()

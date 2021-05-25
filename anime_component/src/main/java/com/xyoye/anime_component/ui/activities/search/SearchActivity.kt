@@ -21,8 +21,10 @@ import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.common_component.utils.showKeyboard
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Anime.Search)
+@AndroidEntryPoint
 class SearchActivity : BaseActivity<SearchViewModel, ActivitySearchBinding>() {
     @Autowired
     @JvmField

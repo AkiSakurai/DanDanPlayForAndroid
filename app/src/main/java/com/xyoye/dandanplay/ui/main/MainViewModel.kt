@@ -6,24 +6,29 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.UserInfoHelper
 import com.xyoye.data_component.data.LoginData
 import com.xyoye.data_component.entity.DanmuBlockEntity
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.w3c.dom.Element
 import java.io.InputStream
 import java.util.*
+import javax.inject.Inject
 import javax.xml.parsers.DocumentBuilderFactory
 
 /**
  * Created by xyoye on 2020/7/27.
  */
 
-class MainViewModel : BaseViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    val Retrofit: RetrofitModule
+)  : BaseViewModel() {
 
     val reLoginLiveData = MutableLiveData<LoginData>()
 

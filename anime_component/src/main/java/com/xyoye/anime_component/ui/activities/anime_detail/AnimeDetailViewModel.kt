@@ -5,15 +5,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.AnimeDetailData
 import com.xyoye.data_component.data.BangumiData
 import com.xyoye.data_component.data.CommonJsonData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.DecimalFormat
+import javax.inject.Inject
 
-class AnimeDetailViewModel : BaseViewModel() {
+@HiltViewModel
+class AnimeDetailViewModel @Inject constructor(
+    val Retrofit: RetrofitModule
+) : BaseViewModel() {
 
     val animeIdField = ObservableField<String>()
     val animeTitleField = ObservableField<String>()

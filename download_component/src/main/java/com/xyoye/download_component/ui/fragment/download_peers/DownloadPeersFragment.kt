@@ -2,11 +2,9 @@ package com.xyoye.download_component.ui.fragment.download_peers
 
 import android.os.Bundle
 import com.xyoye.common_component.base.BaseFragment
-
 import com.xyoye.download_component.BR
 import com.xyoye.download_component.R
 import com.xyoye.download_component.databinding.FragmentDownloadPeersBinding
-import com.xyoye.download_component.ui.fragment.download_info.DownloadInfoFragment
 
 class DownloadPeersFragment :
     BaseFragment<DownloadPeersFragmentViewModel, FragmentDownloadPeersBinding>() {

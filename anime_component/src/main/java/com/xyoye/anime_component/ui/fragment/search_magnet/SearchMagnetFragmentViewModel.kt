@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.storage.platform.AndroidPlatform
 import com.xyoye.common_component.utils.MagnetUtils
@@ -19,13 +19,17 @@ import com.xyoye.data_component.data.MagnetTypeData
 import com.xyoye.data_component.entity.MagnetScreenEntity
 import com.xyoye.data_component.entity.MagnetSearchHistoryEntity
 import com.xyoye.data_component.enums.MagnetScreenType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import java.util.*
+import javax.inject.Inject
 
-class SearchMagnetFragmentViewModel : BaseViewModel() {
+@HiltViewModel
+class SearchMagnetFragmentViewModel @Inject constructor(
+    val Retrofit: RetrofitModule
+)  : BaseViewModel() {
 
     val magnetTypeId = ObservableField<Int>()
     val magnetTypeText = ObservableField("全部分类")

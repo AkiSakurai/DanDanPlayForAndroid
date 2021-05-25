@@ -3,16 +3,21 @@ package com.xyoye.user_component.ui.fragment.personal
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.data_component.data.CloudHistoryListData
 import com.xyoye.data_component.data.FollowAnimeData
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 /**
  * Created by xyoye on 2020/7/28.
  */
 
-class PersonalFragmentViewModel : BaseViewModel() {
+@HiltViewModel
+class PersonalFragmentViewModel @Inject constructor(
+    val Retrofit: RetrofitModule
+)  : BaseViewModel() {
     var followData: FollowAnimeData? = null
     var historyData: CloudHistoryListData? = null
 

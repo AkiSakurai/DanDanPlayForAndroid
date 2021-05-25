@@ -13,8 +13,10 @@ import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityBilibiliDanmuBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Local.BiliBiliDanmu)
+@AndroidEntryPoint
 class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilibiliDanmuBinding>() {
     companion object {
         private const val DOWNLOAD_BY_LINK = 1

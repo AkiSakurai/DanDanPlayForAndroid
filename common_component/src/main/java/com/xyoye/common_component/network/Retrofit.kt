@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
  * Created by xyoye on 2020/4/14.
  */
 
-class Retrofit private constructor() {
+class DefaultRetrofit private constructor() {
     companion object {
         private const val baseUrl = "https://api.acplay.net/"
         private const val resUrl = "http://res.acplay.net/"
@@ -71,7 +71,7 @@ class Retrofit private constructor() {
     }
 
     private object Holder {
-        val instance = Retrofit()
+        val instance = DefaultRetrofit ()
     }
 
     private fun getOkHttpClient(

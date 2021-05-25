@@ -17,6 +17,7 @@ import com.xyoye.common_component.utils.dp2px
 import com.youth.banner.config.BannerConfig
 import com.youth.banner.config.IndicatorConfig
 import com.youth.banner.indicator.CircleIndicator
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 /**
@@ -24,6 +25,7 @@ import java.util.*
  */
 
 @Route(path = RouteTable.Anime.HomeFragment)
+@AndroidEntryPoint
 class HomeFragment : BaseFragment<HomeFragmentViewModel, FragmentHomeBinding>() {
 
     override fun initViewModel() = ViewModelInit(

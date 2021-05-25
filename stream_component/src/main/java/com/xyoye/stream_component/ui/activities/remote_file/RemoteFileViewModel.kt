@@ -9,7 +9,7 @@ import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.formatFileName
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
@@ -19,11 +19,18 @@ import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.PlayHistoryUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class RemoteFileViewModel : BaseViewModel() {
+@HiltViewModel
+class RemoteFileViewModel @Inject constructor(
+    val DanmuUtils : DanmuUtilsModule,
+    val Retrofit: RetrofitModule
+)  : BaseViewModel() {
+
     //当前是否在根目录
     val inRootFolder = ObservableBoolean(true)
 

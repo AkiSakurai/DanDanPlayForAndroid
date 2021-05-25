@@ -16,19 +16,10 @@
 
 package com.xyoye.danmaku;
 
+import static master.flame.danmaku.danmaku.model.IDanmakus.ST_BY_TIME;
+
 import android.graphics.Color;
 import android.text.TextUtils;
-
-import master.flame.danmaku.danmaku.model.AlphaValue;
-import master.flame.danmaku.danmaku.model.BaseDanmaku;
-import master.flame.danmaku.danmaku.model.Duration;
-import master.flame.danmaku.danmaku.model.IDisplayer;
-import master.flame.danmaku.danmaku.model.SpecialDanmaku;
-import master.flame.danmaku.danmaku.model.android.DanmakuFactory;
-import master.flame.danmaku.danmaku.model.android.Danmakus;
-import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
-import master.flame.danmaku.danmaku.parser.android.AndroidFileSource;
-import master.flame.danmaku.danmaku.util.DanmakuUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +33,16 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import java.io.IOException;
 import java.util.Locale;
 
-import static master.flame.danmaku.danmaku.model.IDanmakus.ST_BY_TIME;
+import master.flame.danmaku.danmaku.model.AlphaValue;
+import master.flame.danmaku.danmaku.model.BaseDanmaku;
+import master.flame.danmaku.danmaku.model.Duration;
+import master.flame.danmaku.danmaku.model.IDisplayer;
+import master.flame.danmaku.danmaku.model.SpecialDanmaku;
+import master.flame.danmaku.danmaku.model.android.DanmakuFactory;
+import master.flame.danmaku.danmaku.model.android.Danmakus;
+import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
+import master.flame.danmaku.danmaku.parser.android.AndroidFileSource;
+import master.flame.danmaku.danmaku.util.DanmakuUtils;
 
 public class BiliDanmakuParser extends BaseDanmakuParser {
 

@@ -1,7 +1,5 @@
 package com.xyoye.subtitle.format;
 
-import android.text.TextUtils;
-
 import com.xyoye.subtitle.info.Caption;
 import com.xyoye.subtitle.info.Time;
 import com.xyoye.subtitle.info.TimedTextObject;

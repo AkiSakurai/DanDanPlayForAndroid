@@ -3,13 +3,14 @@ package com.xyoye.local_component.ui.activities.bilibili_danmu
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.utils.DanmuUtils
+import com.xyoye.common_component.network.RetrofitModule
+import com.xyoye.common_component.utils.DanmuUtilsModule
 import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.data_component.data.CidBungumiData
 import com.xyoye.data_component.data.CidVideoBean
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -21,8 +22,13 @@ import java.util.*
 import java.util.regex.Pattern
 import java.util.zip.Inflater
 import java.util.zip.InflaterInputStream
+import javax.inject.Inject
 
-class BilibiliDanmuViewModel : BaseViewModel() {
+@HiltViewModel
+class BilibiliDanmuViewModel @Inject constructor(
+        val DanmuUtils : DanmuUtilsModule,
+        val Retrofit: RetrofitModule
+    ): BaseViewModel() {
 
     val downloadMessageLiveData = MutableLiveData<String>()
     val clearMessageLiveData = MutableLiveData<Boolean>()

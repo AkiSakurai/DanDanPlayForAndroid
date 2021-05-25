@@ -4,18 +4,23 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.data_component.data.remote.RemotePlayInfo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 
-class RemoteControlViewModel : BaseViewModel() {
+@HiltViewModel
+class RemoteControlViewModel @Inject constructor(
+    val Retrofit: RetrofitModule
+)  : BaseViewModel() {
 
     @Volatile
     private var playInfo: RemotePlayInfo? = null

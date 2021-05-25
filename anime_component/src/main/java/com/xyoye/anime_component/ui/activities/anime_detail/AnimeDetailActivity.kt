@@ -28,14 +28,19 @@ import com.xyoye.anime_component.ui.fragment.anime_intro.AnimeIntroFragment
 import com.xyoye.anime_component.ui.fragment.anime_recommend.AnimeRecommendFragment
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.isNightMode
+import com.xyoye.common_component.extension.setGlideImage
+import com.xyoye.common_component.extension.setTextColorRes
+import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.BangumiData
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
 import kotlin.math.max
 
 @Route(path = RouteTable.Anime.AnimeDetail)
+@AndroidEntryPoint
 class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDetailBinding>() {
 
     @Autowired

@@ -4,13 +4,18 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.SecurityHelper
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.CommonJsonData
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ForgotViewModel : BaseViewModel() {
+@HiltViewModel
+class ForgotViewModel @Inject constructor(
+    val Retrofit: RetrofitModule
+)  : BaseViewModel() {
 
     val isForgotPassword = ObservableField<Boolean>()
 

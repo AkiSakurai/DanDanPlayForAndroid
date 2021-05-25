@@ -1,7 +1,6 @@
 package com.xyoye.download_component.frostwire.io
 
 import com.frostwire.jlibtorrent.swig.libtorrent
-import com.xyoye.common_component.storage.file_system.LollipopFileSystem
 import com.xyoye.common_component.storage.platform.AndroidPlatform
 
 /**

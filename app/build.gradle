@@ -1,20 +1,11 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
-
-    flavorDimensions "api"
-    productFlavors {
-        dandanplay {
-
-        }
-        bgm {
-            applicationId "com.xyoye.dandanplay.bgm"
-        }
-    }
 
     defaultConfig {
         applicationId "com.xyoye.dandanplay"
@@ -81,6 +72,8 @@ android {
         }
     }
 
+    rootProject.ext.configureApp(delegate)
+
     compileOptions{
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -110,6 +103,8 @@ dependencies {
     kapt rootProject.ext.dependencies["arouter-compiler"]
 
     implementation project(path: ':common_component')
+    implementation project(path: ':di_component')
+
     if (!IS_APPLICATION_RUN.toBoolean()){
         implementation project(path: ':download_component')
         implementation project(path: ':player_component')
@@ -118,4 +113,6 @@ dependencies {
         implementation project(path: ':local_component')
         implementation project(path: ':stream_component')
     }
+    implementation rootProject.ext.dependencies["hilt"]
+    kapt rootProject.ext.dependencies["hilt-compiler"]
 }

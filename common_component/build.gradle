@@ -81,6 +81,11 @@ dependencies {
     api rootProject.ext.dependencies["arouter-api"]
 
     api rootProject.ext.dependencies["retrofit"]
+
+    api rootProject.ext.dependencies["inject"]
+    api rootProject.ext.dependencies["hilt"]
+
+
     implementation rootProject.ext.dependencies["converter-moshi"]
     implementation rootProject.ext.dependencies["mmkv"]
 
@@ -98,4 +103,5 @@ dependencies {
 
     kapt files('libs/mmkv-compiler.jar')
     kapt rootProject.ext.dependencies["room-compiler"]
+    kapt rootProject.ext.dependencies["hilt-compiler"]
 }

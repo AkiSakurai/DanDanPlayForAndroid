@@ -4,7 +4,7 @@
     package="com.xyoye.anime_component">
 
     <application
-        android:name="com.xyoye.common_component.base.app.BaseApplication"
+        android:name="com.xyoye.anime_component.app.IApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -32,6 +32,15 @@
         <activity android:name=".ui.activities.search_advanced.SearchAdvancedActivity"/>
         <activity android:name=".ui.activities.anime_follow.AnimeFollowActivity"/>
         <activity android:name=".ui.activities.anime_history.AnimeHistoryActivity"/>
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.xyoye.common_component.base.app.BaseInitializer"
+                android:value="androidx.startup" />
+        </provider>
     </application>
 
 </manifest>

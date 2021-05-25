@@ -30,8 +30,9 @@ import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.data.MagnetData
 import com.xyoye.data_component.enums.MagnetScreenType
 import com.xyoye.data_component.enums.SheetActionType
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class SearchMagnetFragment :
     BaseFragment<SearchMagnetFragmentViewModel, FragmentSearchMagnetBinding>(), SearchListener {
 

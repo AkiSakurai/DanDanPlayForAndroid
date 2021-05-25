@@ -14,8 +14,10 @@ import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityRemoteLoginBinding
 import com.xyoye.stream_component.ui.dialog.RemoteLoginDialog
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Stream.RemoteLogin)
+@AndroidEntryPoint
 class RemoteLoginActivity : BaseActivity<RemoteLoginViewModel, ActivityRemoteLoginBinding>() {
     companion object {
         private const val REQUEST_CODE_REMOTE_SCAN = 1001

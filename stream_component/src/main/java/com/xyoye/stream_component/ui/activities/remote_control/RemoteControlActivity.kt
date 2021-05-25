@@ -10,8 +10,10 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityRemoteControlBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Stream.RemoteControl)
+@AndroidEntryPoint
 class RemoteControlActivity : BaseActivity<RemoteControlViewModel, ActivityRemoteControlBinding>() {
 
     override fun initViewModel() =

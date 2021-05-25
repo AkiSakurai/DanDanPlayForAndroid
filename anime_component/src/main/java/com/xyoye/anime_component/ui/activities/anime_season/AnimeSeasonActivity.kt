@@ -14,12 +14,14 @@ import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
-import com.xyoye.common_component.utils.dp2px
 import com.xyoye.data_component.data.CommonTypeData
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Anime.AnimeSeason)
+@AndroidEntryPoint
 class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeasonBinding>() {
     private val animeAdapter = AnimeAdapter.getAdapter(this)
 

@@ -1,13 +1,14 @@
 package com.xyoye.common_component.utils
 
 import com.xyoye.common_component.extension.formatFileName
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.data_component.data.DanmuData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import org.xml.sax.helpers.AttributesImpl
 import java.io.*
+import javax.inject.Inject
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.sax.SAXTransformerFactory
 import javax.xml.transform.stream.StreamResult
@@ -16,7 +17,7 @@ import javax.xml.transform.stream.StreamResult
  * Created by xyoye on 2020/11/23.
  */
 
-object DanmuUtils {
+class DanmuUtilsModule @Inject constructor(val Retrofit: RetrofitModule) {
 
     fun saveDanmu(fileName: String, inputStream: InputStream): String? {
         val danmuFile = File(PathHelper.getDanmuDirectory(), fileName.formatFileName())

@@ -4,17 +4,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
-import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.utils.stringCompare
+import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.AnimeData
 import com.xyoye.data_component.data.BangumiAnimeData
 import com.xyoye.data_component.data.CommonTypeData
 import com.xyoye.data_component.enums.AnimeSortType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.*
+import javax.inject.Inject
 
-class AnimeSeasonViewModel : BaseViewModel() {
+@HiltViewModel
+class AnimeSeasonViewModel @Inject constructor(
+    val Retrofit: RetrofitModule
+) : BaseViewModel() {
     private val seasonData = mutableListOf(
         CommonTypeData("10月", "10"),
         CommonTypeData("7月", "7"),

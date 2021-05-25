@@ -23,8 +23,10 @@ import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityLocalMediaBinding
 import com.xyoye.local_component.databinding.ItemMediaFolderBinding
 import com.xyoye.local_component.databinding.ItemMediaVideoBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Local.LocalMediaStorage)
+@AndroidEntryPoint
 class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaBinding>() {
     companion object {
         private const val ACTION_BIND_DANMU_AUTO = 1

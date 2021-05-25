@@ -18,14 +18,20 @@ import com.xyoye.stream_component.utils.PlayHistoryUtils
 import com.xyoye.stream_component.utils.ftp.FTPException
 import com.xyoye.stream_component.utils.ftp.FTPManager
 import com.xyoye.stream_component.utils.server.FTPPlayServer
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.apache.commons.net.ftp.FTPFile
 import java.io.File
+import javax.inject.Inject
 
-class FTPFileViewModel : BaseViewModel() {
+@HiltViewModel
+class FTPFileViewModel @Inject constructor(
+        val DanmuUtils: DanmuUtilsModule
+    ) : BaseViewModel() {
+
     private val showHiddenFile = AppConfig.isShowHiddenFile()
 
     val fileLiveData = MutableLiveData<MutableList<FTPFile>>()

@@ -8,7 +8,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.RequestError
 import com.xyoye.common_component.network.request.RequestErrorHandler
 import com.xyoye.data_component.data.SubtitleSearchData
@@ -21,7 +21,10 @@ import retrofit2.HttpException
  * Created by xyoye on 2021/3/25.
  */
 
-class SearchSubtitleRepository(private val scope: CoroutineScope) {
+class SearchSubtitleRepository  constructor(
+    val Retrofit: RetrofitModule,
+    private val scope: CoroutineScope
+) {
 
     private val searchKeyLiveData = MutableLiveData<String>()
 

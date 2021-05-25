@@ -1,13 +1,12 @@
 package com.xyoye.player_component.ui.activities.player
 
 import androidx.lifecycle.viewModelScope
-import master.flame.danmaku.danmaku.model.BaseDanmaku
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.DDLog
-import com.xyoye.common_component.utils.DanmuUtils
+import com.xyoye.common_component.utils.DanmuUtilsModule
 import com.xyoye.common_component.utils.StreamHeaderUtil
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.weight.ToastCenter
@@ -17,14 +16,21 @@ import com.xyoye.data_component.data.SendDanmuData
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import master.flame.danmaku.danmaku.model.BaseDanmaku
 import java.math.BigDecimal
 import java.util.*
 import java.util.regex.Pattern
+import javax.inject.Inject
 
-class PlayerViewModel : BaseViewModel() {
+@HiltViewModel
+class PlayerViewModel @Inject constructor(
+    val DanmuUtils : DanmuUtilsModule,
+    val Retrofit: RetrofitModule
+)  : BaseViewModel() {
 
     val localDanmuBlockLiveData = DatabaseManager.instance.getDanmuBlockDao().getAll(false)
     val cloudDanmuBlockLiveData = DatabaseManager.instance.getDanmuBlockDao().getAll(true)

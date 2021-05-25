@@ -2,11 +2,7 @@ package com.xyoye.user_component.ui.activities.setting_app
 
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.xyoye.common_component.base.BaseActivity
-import com.xyoye.common_component.config.AppConfig
-import com.xyoye.common_component.config.AppConfigTable
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.addFragment
-
 import com.xyoye.user_component.BR
 import com.xyoye.user_component.R
 import com.xyoye.user_component.databinding.ActivitySettingAppBinding

@@ -6,20 +6,25 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
-import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.utils.stringCompare
+import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.AnimeData
 import com.xyoye.data_component.data.CommonTypeData
 import com.xyoye.data_component.data.SearchAnimeData
 import com.xyoye.data_component.entity.AnimeSearchHistoryEntity
 import com.xyoye.data_component.enums.AnimeSortType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
-class SearchAnimeFragmentViewModel : BaseViewModel() {
+@HiltViewModel
+class SearchAnimeFragmentViewModel @Inject constructor(
+    val Retrofit: RetrofitModule
+) : BaseViewModel() {
     private val animeTypeData = mutableListOf(
         CommonTypeData("TV动画", "tvseries"),
         CommonTypeData("剧场版", "movie"),

@@ -22,12 +22,14 @@ import com.xyoye.common_component.extension.gridEmpty
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.FastClickFilter
-import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.dp2px
+import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.data_component.data.CloudHistoryData
 import com.xyoye.data_component.data.CloudHistoryListData
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Anime.AnimeHistory)
+@AndroidEntryPoint
 class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHistoryBinding>() {
 
     @Autowired

@@ -12,11 +12,13 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.gridEmpty
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.toResColor
-import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.dp2px
+import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.data_component.data.FollowAnimeData
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Anime.AnimeFollow)
+@AndroidEntryPoint
 class AnimeFollowActivity : BaseActivity<AnimeFollowViewModel, ActivityAnimeFollowBinding>() {
     private val animeAdapter = AnimeAdapter.getAdapter(this)
 

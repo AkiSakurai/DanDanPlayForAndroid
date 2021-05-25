@@ -36,10 +36,12 @@ import com.xyoye.local_component.databinding.ItemSubtitleSearchSourceBinding
 import com.xyoye.local_component.databinding.ItemSubtitleSourceBinding
 import com.xyoye.local_component.ui.dialog.SubtitleDetailDialog
 import com.xyoye.local_component.ui.dialog.SubtitleFileListDialog
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @Route(path = RouteTable.Local.BindSubtitle)
+@AndroidEntryPoint
 class BindSubtitleActivity : BaseActivity<BindSubtitleViewModel, ActivityBindSubtitleBinding>() {
 
     @JvmField

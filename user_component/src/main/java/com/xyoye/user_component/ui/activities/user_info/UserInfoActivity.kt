@@ -15,8 +15,10 @@ import com.xyoye.user_component.BR
 import com.xyoye.user_component.R
 import com.xyoye.user_component.databinding.ActivityUserInfoBinding
 import com.xyoye.user_component.ui.dialog.UpdatePasswordDialog
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.User.UserInfo)
+@AndroidEntryPoint
 class UserInfoActivity : BaseActivity<UserInfoViewModel, ActivityUserInfoBinding>() {
 
     private val updatePasswordDialog = UpdatePasswordDialog { old, new ->

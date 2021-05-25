@@ -5,7 +5,7 @@ import androidx.paging.*
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.SubtitleUtils
 import com.xyoye.common_component.utils.getFileName
@@ -14,12 +14,17 @@ import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.*
 import com.xyoye.local_component.utils.SearchSubtitleRepository
 import com.xyoye.local_component.utils.SubtitleHashUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class BindSubtitleViewModel : BaseViewModel() {
+@HiltViewModel
+class BindSubtitleViewModel @Inject constructor(
+    val Retrofit: RetrofitModule
+) : BaseViewModel() {
 
-    private val searchSubtitleRepository = SearchSubtitleRepository(viewModelScope)
+    private val searchSubtitleRepository = SearchSubtitleRepository(Retrofit, viewModelScope)
 
     val sourceLiveData = MutableLiveData<MutableList<SubtitleMatchData>>()
     val bindResultLiveData = MutableLiveData<Boolean>()
