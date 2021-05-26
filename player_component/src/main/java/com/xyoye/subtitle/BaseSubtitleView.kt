@@ -1,7 +1,10 @@
 package com.xyoye.subtitle
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.text.Layout
+import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -58,6 +61,7 @@ open class BaseSubtitleView @JvmOverloads constructor(
         setLayerType(LAYER_TYPE_SOFTWARE, null)
     }
 
+    @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         //绘制前，清除上一次的字幕
         clearSubtitle(canvas)
@@ -70,12 +74,25 @@ open class BaseSubtitleView @JvmOverloads constructor(
                 continue
             }
 
-            mTextPaint.getTextBounds(subtitle.text, 0, subtitle.text.length, mTextBounds)
+            val strokelayout = StaticLayout(
+                subtitle.text, mStrokePaint, measuredWidth, Layout.Alignment.ALIGN_NORMAL,
+                1.0f, 0.0f, false
+            )
+            val textLayout = StaticLayout(
+                subtitle.text, mTextPaint, measuredWidth, Layout.Alignment.ALIGN_NORMAL,
+                1.0f, 0.0f, false
+            )
+
             val x = measuredWidth / 2f
-            val y = mSubtitleY - mTextBounds.height() / 2f
-            canvas.drawText(subtitle.text, x, y, mStrokePaint)
-            canvas.drawText(subtitle.text, x, y, mTextPaint)
-            mSubtitleY -= mTextBounds.height() + dp2px(5f)
+            val y = mSubtitleY - textLayout.height
+
+            canvas.save()
+            canvas.translate(x, y.toFloat())
+            strokelayout.draw(canvas)
+            textLayout.draw(canvas)
+            canvas.restore()
+
+            mSubtitleY -= strokelayout.height + dp2px(5f)
         }
 
         //顶部字幕绘制，从上往下绘制

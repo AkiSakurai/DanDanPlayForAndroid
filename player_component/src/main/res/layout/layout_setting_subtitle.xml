@@ -93,7 +93,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
-                android:max="100"
+                android:max="200"
                 tools:progress="50" />
 
             <RelativeLayout
