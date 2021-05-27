@@ -64,6 +64,10 @@ class ControlWrapper(
         mVideoPlayer.setScreenScale(scaleType)
     }
 
+    override fun setScreenGravity(gravity: Int) {
+        mVideoPlayer.setScreenGravity(gravity)
+    }
+
     override fun setSpeed(speed: Float) {
         mVideoPlayer.setSpeed(speed)
         mDanmuController.setSpeed(speed)

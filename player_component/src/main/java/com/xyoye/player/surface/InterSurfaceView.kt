@@ -19,6 +19,8 @@ interface InterSurfaceView {
 
     fun setScaleType(screenScale: VideoScreenScale)
 
+    fun setGravity(gravity: Int)
+
     fun getView(): View
 
     fun doScreenShot(): Bitmap?

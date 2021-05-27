@@ -1,5 +1,6 @@
 package com.xyoye.player.controller.setting
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Point
 import android.util.AttributeSet
@@ -18,6 +19,7 @@ import com.xyoye.common_component.extension.grid
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.dp2px
+import com.xyoye.data_component.bean.VideoGravityBean
 import com.xyoye.data_component.bean.VideoScaleBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
@@ -50,6 +52,15 @@ class SettingPlayerView(
         VideoScaleBean(VideoScreenScale.SCREEN_SCALE_ORIGINAL, "原始"),
         VideoScaleBean(VideoScreenScale.SCREEN_SCALE_MATCH_PARENT, "填充"),
         VideoScaleBean(VideoScreenScale.SCREEN_SCALE_CENTER_CROP, "裁剪")
+    )
+
+    @SuppressLint("RtlHardcoded")
+    private val mVideoGravityData = mutableListOf(
+        VideoGravityBean(Gravity.CENTER, "中"),
+        VideoGravityBean(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, "下"),
+        VideoGravityBean(Gravity.TOP or Gravity.CENTER_HORIZONTAL, "上"),
+        VideoGravityBean(Gravity.LEFT or Gravity.CENTER_VERTICAL, "左"),
+        VideoGravityBean(Gravity.RIGHT or Gravity.CENTER_VERTICAL, "右"),
     )
 
     private val mPlayerTypes = PlayerType.values().toMutableList()
@@ -188,6 +199,44 @@ class SettingPlayerView(
                                     }
                                 }
                                 mControlWrapper.setScreenScale(data.screenScale)
+                                data.isChecked = true
+                                notifyItemChanged(position)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        viewBinding.videoGravityRv.apply {
+            layoutManager = grid(5)
+
+            adapter = buildAdapter<VideoGravityBean> {
+                initData(mVideoGravityData)
+
+                addItem<VideoGravityBean, ItemSettingVideoParamsBinding>(R.layout.item_setting_video_params) {
+                    initView { data, position, _ ->
+                        itemBinding.apply {
+                            paramsTv.text = data.gravityName
+                            paramsTv.isSelected = data.isChecked
+                            paramsTv.setOnClickListener {
+                                if (!this@SettingPlayerView::mControlWrapper.isInitialized)
+                                    return@setOnClickListener
+
+                                if (data.isChecked) {
+                                    mControlWrapper.setScreenScale(VideoScreenScale.SCREEN_SCALE_DEFAULT)
+                                    data.isChecked = false
+                                    notifyItemChanged(position)
+                                    return@setOnClickListener
+                                }
+
+                                for ((index, bean) in mVideoGravityData.withIndex()) {
+                                    if (bean.isChecked) {
+                                        bean.isChecked = false
+                                        notifyItemChanged(index)
+                                    }
+                                }
+                                mControlWrapper.setScreenGravity(data.screenGravity)
                                 data.isChecked = true
                                 notifyItemChanged(position)
                             }

@@ -73,6 +73,9 @@ class DanDanVideoPlayer(
     //当前视图缩放类型
     private var mScreenScale = PlayerInitializer.screenScale
 
+    //当前视图位置
+    private var mScreenGravity = Gravity.CENTER
+
     //当前播放器宽高
     private var mVideoSize = Point(0, 0)
 
@@ -162,6 +165,11 @@ class DanDanVideoPlayer(
         mRenderView?.setScaleType(mScreenScale)
     }
 
+    override fun setScreenGravity(gravity: Int) {
+        mScreenGravity = gravity
+        mRenderView?.setGravity(gravity)
+    }
+
     override fun setSpeed(speed: Float) {
         if (isInPlayState()) {
             mVideoPlayer.setSpeed(speed)
@@ -194,6 +202,7 @@ class DanDanVideoPlayer(
     override fun onVideoSizeChange(width: Int, height: Int) {
         mVideoSize = Point(width, height)
         mRenderView?.setScaleType(mScreenScale)
+        mRenderView?.setGravity(mScreenGravity)
         mRenderView?.setVideoSize(width, height)
         mVideoController?.setVideoSize(mVideoSize)
     }

@@ -73,6 +73,11 @@ interface InterVideoPlayer {
     fun setScreenScale(scaleType: VideoScreenScale)
 
     /**
+     * 设置视频位置
+     */
+    fun setScreenGravity(gravity: Int)
+
+    /**
      * 设置倍速
      */
     fun setSpeed(speed: Float)

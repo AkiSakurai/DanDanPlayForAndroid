@@ -3,6 +3,8 @@ package com.xyoye.player.surface
 import android.content.Context
 import android.graphics.Bitmap
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.kernel.impl.vlc.VlcVideoPlayer
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
@@ -44,6 +46,17 @@ class RenderVLCView(
             VideoScreenScale.SCREEN_SCALE_DEFAULT -> MediaPlayer.ScaleType.SURFACE_BEST_FIT
         }
         mVideoPlayer.setScale(scale)
+    }
+
+    override fun setGravity(gravity: Int) {
+        val videoSurface = vlcLayout.findViewById<View>(org.videolan.R.id.surface_video)
+        val width = videoSurface.layoutParams.width
+        val height =  videoSurface.layoutParams.height
+        videoSurface.layoutParams = FrameLayout.LayoutParams(
+            width,
+            height,
+            gravity
+        )
     }
 
     override fun getView(): View {

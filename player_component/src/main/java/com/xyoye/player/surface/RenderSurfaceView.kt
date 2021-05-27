@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import android.widget.FrameLayout
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.RenderMeasureHelper
@@ -60,6 +61,16 @@ class RenderSurfaceView(context: Context) : SurfaceView(context), InterSurfaceVi
     override fun setScaleType(screenScale: VideoScreenScale) {
         mMeasureHelper.mScreenScale = screenScale
         requestLayout()
+    }
+
+    override fun setGravity(gravity: Int) {
+        val width = layoutParams.width
+        val height = layoutParams.height
+        layoutParams = FrameLayout.LayoutParams(
+            width,
+            height,
+            gravity
+        )
     }
 
     override fun getView() = this
