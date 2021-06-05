@@ -1,9 +1,11 @@
 package com.xyoye.local_component.ui.activities.local_media
 
+import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.xyoye.common_component.base.BaseViewModel
+import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
@@ -17,9 +19,11 @@ import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.bean.PlayParams
+import com.xyoye.data_component.data.CommonTypeData
 import com.xyoye.data_component.data.SubtitleThunderData
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.entity.VideoEntity
+import com.xyoye.data_component.enums.FileSortType
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.local_component.utils.SubtitleHashUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,6 +56,7 @@ class LocalMediaViewModel @Inject constructor(
     val fileLiveData = MediatorLiveData<MutableList<VideoEntity>>()
 
     val filterLiveData = MutableLiveData<String?>()
+    val sortLiveData = MutableLiveData<FileSortType>()
     val filteredFileLiveData = MediatorLiveData<MutableList<VideoEntity>>()
 
     val playVideoLiveData = MutableLiveData<PlayParams>()
@@ -83,6 +88,8 @@ class LocalMediaViewModel @Inject constructor(
             if(!inRootFolder.get())
                 fileDataObserver(fileLiveData.value, it)
         }
+
+        sortLiveData.value = FileSortType.valueOf(AppConfig.getLocalFileSortType())
     }
 
     fun fastPlay() {
@@ -144,26 +151,48 @@ class LocalMediaViewModel @Inject constructor(
             folderFileLiveData?.let {
                 fileLiveData.removeSource(it)
             }
+            fileLiveData.removeSource(sortLiveData)
 
             folderFileLiveData = DatabaseManager.instance.getVideoDao().getVideoInFolder(folderPath)
             val lastPlayHistory = queryLastPlayHistory()
-            fileLiveData.addSource(folderFileLiveData!!) { videoData ->
+            val updateLiveDate = { videoData:MutableList<VideoEntity>, sortType: FileSortType ->
                 if (!inRootFolder.get()) {
+                        //是否为最后一次播放的文件
+                        lastPlayHistory?.apply {
+                            videoData.find { it.filePath == url }?.isLastPlay = true
+                        }
 
-                    //是否为最后一次播放的文件
-                    lastPlayHistory?.apply {
-                        videoData.find { it.filePath == url }?.isLastPlay = true
+                        //视频按文件名排序
+                        when(sortType) {
+                            FileSortType.DATE -> {
+                                videoData.sortByDescending { getFileDate(it.filePath) }
+                            }
+                            else -> {
+                                videoData.sortWith(FileComparator(
+                                    value = { getFileName(it.filePath) },
+                                    isDirectory = { false }
+                                ))
+                            }
+                        }
+                        fileLiveData.postValue(videoData)
                     }
+            }
 
-                    //视频按文件名排序
-                    videoData.sortWith(FileComparator(
-                        value = { getFileName(it.filePath) },
-                        isDirectory = { false }
-                    ))
-                    fileLiveData.postValue(videoData)
+            fileLiveData.addSource(folderFileLiveData!!) { videoData ->
+                updateLiveDate(videoData, sortLiveData.value!!)
+            }
+
+            fileLiveData.addSource(sortLiveData) { sortType ->
+                folderFileLiveData?.value?.let { videoData ->
+                    updateLiveDate(videoData, sortType)
                 }
             }
         }
+    }
+
+    fun sort(sortTyoe: FileSortType) {
+        sortLiveData.value = sortTyoe
+        AppConfig.putLocalFileSortType(sortTyoe.value)
     }
 
     fun matchDanmu(filePath: String) {

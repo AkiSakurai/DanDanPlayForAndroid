@@ -49,4 +49,8 @@ object AppConfigTable {
     @MMKVFiled
     //上次打开目录开关
     var lastOpenFolderEnable : Boolean = true
+
+    @MMKVFiled
+    //上次打开目录开关
+    var localFileSortType: Int = 0
 }

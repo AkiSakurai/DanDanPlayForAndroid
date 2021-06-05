@@ -24,6 +24,12 @@ fun getDirPath(filePath: String, separator: String = File.separator): String {
     return if (lastSep == -1) "" else filePath.substring(0, lastSep)
 }
 
+fun getFileDate(filePath: String?): Long {
+    return filePath?.let {
+        File(it).lastModified()
+    }?:0
+}
+
 /**
  * 通过文件获取文件名，包括文件扩展名
  */

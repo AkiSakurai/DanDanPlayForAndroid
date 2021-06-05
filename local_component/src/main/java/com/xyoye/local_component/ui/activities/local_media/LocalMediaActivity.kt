@@ -1,7 +1,13 @@
 package com.xyoye.local_component.ui.activities.local_media
 
+import android.content.Context
+import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import androidx.appcompat.widget.AppCompatSpinner
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -9,6 +15,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
+import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.*
@@ -17,6 +24,7 @@ import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.entity.VideoEntity
+import com.xyoye.data_component.enums.FileSortType
 import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
@@ -24,6 +32,7 @@ import com.xyoye.local_component.databinding.ActivityLocalMediaBinding
 import com.xyoye.local_component.databinding.ItemMediaFolderBinding
 import com.xyoye.local_component.databinding.ItemMediaVideoBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @Route(path = RouteTable.Local.LocalMediaStorage)
 @AndroidEntryPoint
@@ -95,9 +104,9 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_media, menu)
-        val view = menu?.findItem(R.id.app_bar_search)?.actionView as SearchView?
+        val searchView = menu?.findItem(R.id.app_bar_search)?.actionView as SearchView?
 
-        view?.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener,
+        searchView?.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener,
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -111,10 +120,32 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
         viewModel.filterLiveData.observe(this) {
             if(it == null)
             {
-                view?.setQuery(null, false)
-                view?.isIconified = true
+                searchView?.setQuery(null, false)
+                searchView?.isIconified = true
             }
         }
+
+        val spinner = menu?.findItem(R.id.app_bar_sort)?.actionView as AppCompatSpinner
+        spinner.apply {
+            adapter = ArrayAdapter(this@LocalMediaActivity,
+                android.R.layout.simple_dropdown_item_1line,
+                Enum.localizedValues<FileSortType>(this@LocalMediaActivity,
+                    com.xyoye.common_component.R.array.enum_sort_type))
+            setSelection(FileSortType.valueOf(AppConfig.getLocalFileSortType()).ordinal)
+            onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long,
+                ) {
+                    viewModel.sort(FileSortType.values()[position])
+                }
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+            }
+        }
+
         return true
     }
 

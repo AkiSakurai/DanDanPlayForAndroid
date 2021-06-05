@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="enum_sort_type">
+        <item>名稱</item>
+        <item>日期</item>
+    </string-array>
+</resources>
