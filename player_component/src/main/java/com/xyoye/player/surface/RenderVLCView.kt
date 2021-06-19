@@ -2,6 +2,8 @@ package com.xyoye.player.surface
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.view.SurfaceHolder
+import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -23,9 +25,33 @@ class RenderVLCView(
 
     private val vlcLayout = VLCVideoLayout(context)
 
+    private val surfaceCallback: SurfaceHolder.Callback = object : SurfaceHolder.Callback {
+        var hasSurfaceDestroyedBefore = false
+
+        override fun surfaceCreated(holder: SurfaceHolder?) {
+            if(hasSurfaceDestroyedBefore) {
+                mVideoPlayer.attachRenderView(vlcLayout)
+                hasSurfaceDestroyedBefore = false
+                if(!mVideoPlayer.isPlaying()) {
+                    mVideoPlayer.seekTo(mVideoPlayer.getCurrentPosition())
+                }
+            }
+        }
+
+        override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+        }
+
+        override fun surfaceDestroyed(holder: SurfaceHolder?) {
+            hasSurfaceDestroyedBefore = true
+        }
+    }
+
     override fun attachPlayer(player: AbstractVideoPlayer) {
         mVideoPlayer  = (player as VlcVideoPlayer)
         player.attachRenderView(vlcLayout)
+        val surface = vlcLayout.findViewById<SurfaceView>(
+            org.videolan.R.id.surface_video)
+        surface?.holder?.addCallback(surfaceCallback)
     }
 
     override fun setVideoSize(videoWidth: Int, videoHeight: Int) {
