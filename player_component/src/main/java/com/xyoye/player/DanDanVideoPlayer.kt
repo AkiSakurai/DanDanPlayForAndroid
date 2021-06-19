@@ -229,7 +229,11 @@ class DanDanVideoPlayer(
                 setPlayState(PlayState.STATE_BUFFERING_PAUSED)
             }
             PlayerConstant.MEDIA_INFO_BUFFERING_END -> {
-                setPlayState(PlayState.STATE_BUFFERING_PLAYING)
+                if(mVideoPlayer.isPlaying()) {
+                    setPlayState(PlayState.STATE_BUFFERING_PLAYING)
+                } else {
+                    setPlayState(PlayState.STATE_BUFFERING_CAN_PLAY)
+                }
             }
             PlayerConstant.MEDIA_INFO_VIDEO_RENDERING_START -> {
                 setPlayState(PlayState.STATE_PLAYING)

@@ -33,7 +33,10 @@ enum class PlayState(val value: Int) {
     STATE_COMPLETED(7),
 
     //开始播放中止
-    STATE_START_ABORT(8);
+    STATE_START_ABORT(8),
+
+    //缓冲结束，可以播放
+    STATE_BUFFERING_CAN_PLAY(9);
 
     companion object {
         fun formValue(value: Int): PlayState {
@@ -48,6 +51,7 @@ enum class PlayState(val value: Int) {
                 6 -> STATE_BUFFERING_PAUSED
                 7 -> STATE_COMPLETED
                 8 -> STATE_START_ABORT
+                9 -> STATE_BUFFERING_CAN_PLAY
                 else -> STATE_ERROR
             }
         }

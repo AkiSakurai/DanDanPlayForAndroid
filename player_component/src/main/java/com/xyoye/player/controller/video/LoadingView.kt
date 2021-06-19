@@ -59,6 +59,7 @@ class LoadingView(
             PlayState.STATE_PLAYING,
             PlayState.STATE_IDLE,
             PlayState.STATE_BUFFERING_PLAYING,
+            PlayState.STATE_BUFFERING_CAN_PLAY,
             PlayState.STATE_PREPARED -> {
                 hideLoading()
             }
