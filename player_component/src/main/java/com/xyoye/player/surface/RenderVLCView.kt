@@ -75,14 +75,16 @@ class RenderVLCView(
     }
 
     override fun setGravity(gravity: Int) {
-        val videoSurface = vlcLayout.findViewById<View>(org.videolan.R.id.surface_video)
-        val width = videoSurface.layoutParams.width
-        val height =  videoSurface.layoutParams.height
-        videoSurface.layoutParams = FrameLayout.LayoutParams(
-            width,
-            height,
-            gravity
-        )
+        //Todo: Support Texture View
+        vlcLayout.findViewById<View>(org.videolan.R.id.surface_video)?.apply {
+            val width = layoutParams.width
+            val height =  layoutParams.height
+            layoutParams = FrameLayout.LayoutParams(
+                width,
+                height,
+                gravity
+            )
+        }
     }
 
     override fun getView(): View {
