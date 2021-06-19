@@ -19,6 +19,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
+import com.google.common.base.Ascii
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.utils.PathHelper
 
@@ -109,7 +110,7 @@ object ExoMediaSourceHelper {
     }
 
     private fun inferContentType(fileName: String): Int {
-        val name = Util.toLowerInvariant(fileName)
+        val name = Ascii.toLowerCase(fileName)
         return when {
             name.contains(".mpd") -> {
                 C.TYPE_DASH

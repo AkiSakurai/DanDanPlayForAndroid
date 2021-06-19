@@ -24,7 +24,9 @@ class RenderSurfaceView(context: Context) : SurfaceView(context), InterSurfaceVi
         }
 
         override fun surfaceDestroyed(holder: SurfaceHolder?) {
-
+            if (this@RenderSurfaceView::mVideoPlayer.isInitialized && holder != null) {
+                mVideoPlayer.setSurface(null)
+            }
         }
 
         override fun surfaceCreated(holder: SurfaceHolder?) {

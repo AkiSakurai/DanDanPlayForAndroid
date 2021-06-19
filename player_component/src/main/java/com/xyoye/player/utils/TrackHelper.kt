@@ -56,6 +56,7 @@ class TrackHelper(private val mPlayerEventListener: VideoPlayerEventListener) {
 
         for (selection: TrackSelection? in trackSelections.all) {
             if (selection == null) continue
+            selection as ExoTrackSelection
             if (MimeTypes.isAudio(selection.selectedFormat.sampleMimeType)) {
                 selectedAudioId = selection.selectedFormat.id ?: ""
             } else if (MimeTypes.isText(selection.selectedFormat.sampleMimeType)) {

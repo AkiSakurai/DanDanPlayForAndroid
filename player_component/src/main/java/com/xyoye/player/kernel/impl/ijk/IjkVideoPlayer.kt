@@ -65,7 +65,7 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         }
     }
 
-    override fun setSurface(surface: Surface) {
+    override fun setSurface(surface: Surface?) {
         mMediaPlayer.setSurface(surface)
     }
 

@@ -91,7 +91,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Vid
         mMediaSource = ExoMediaSourceHelper.getMediaSource(path, headers)
     }
 
-    override fun setSurface(surface: Surface) {
+    override fun setSurface(surface: Surface?) {
         exoplayer.setVideoSurface(surface)
     }
 
@@ -213,7 +213,8 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Vid
     }
 
     override fun onRenderedFirstFrame() {
-        mPlayerEventListener.onInfo(PlayerConstant.MEDIA_INFO_VIDEO_RENDERING_START, 0)
+        if(exoplayer.playWhenReady)
+            mPlayerEventListener.onInfo(PlayerConstant.MEDIA_INFO_VIDEO_RENDERING_START, 0)
         mIsPreparing = false
     }
 

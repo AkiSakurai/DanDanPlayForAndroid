@@ -95,7 +95,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         mMedia.release()
     }
 
-    override fun setSurface(surface: Surface) {
+    override fun setSurface(surface: Surface?) {
 
     }
 
