@@ -33,7 +33,12 @@ class RenderVLCView(
                 mVideoPlayer.attachRenderView(vlcLayout)
                 hasSurfaceDestroyedBefore = false
                 if(!mVideoPlayer.isPlaying()) {
-                    mVideoPlayer.seekTo(mVideoPlayer.getCurrentPosition())
+                    //For unknown reason
+                    //Some videos are unable to be displayed if not seeking after next event cycle.
+                    //[Nekomoe kissaten&LoliHouse] VLADLOVE - 12 [WebRip 1080p HEVC-10bit AAC ASSx2].mkv
+                    vlcLayout.handler.post {
+                        mVideoPlayer.seekTo(mVideoPlayer.getCurrentPosition())
+                    }
                 }
             }
         }

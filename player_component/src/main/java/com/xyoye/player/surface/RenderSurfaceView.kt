@@ -19,12 +19,15 @@ class RenderSurfaceView(context: Context) : SurfaceView(context), InterSurfaceVi
     private lateinit var mVideoPlayer: AbstractVideoPlayer
 
     private val mSurfaceCallback = object : SurfaceHolder.Callback {
+        var hasSurfaceDestroyedBefore = false
+
         override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
 
         }
 
         override fun surfaceDestroyed(holder: SurfaceHolder?) {
             if (this@RenderSurfaceView::mVideoPlayer.isInitialized && holder != null) {
+                hasSurfaceDestroyedBefore = true
                 mVideoPlayer.setSurface(null)
             }
         }
@@ -32,6 +35,10 @@ class RenderSurfaceView(context: Context) : SurfaceView(context), InterSurfaceVi
         override fun surfaceCreated(holder: SurfaceHolder?) {
             if (this@RenderSurfaceView::mVideoPlayer.isInitialized && holder != null) {
                 mVideoPlayer.setSurface(holder.surface)
+                if(hasSurfaceDestroyedBefore) {
+                    hasSurfaceDestroyedBefore = false
+                    mVideoPlayer.seekTo(mVideoPlayer.getCurrentPosition())
+                }
             }
         }
     }
