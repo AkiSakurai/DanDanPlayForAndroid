@@ -12,6 +12,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.gyf.immersionbar.BarHide
 import com.gyf.immersionbar.ImmersionBar
 import com.xyoye.common_component.base.BaseActivity
+import com.xyoye.common_component.bridge.PlayTaskBridge
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.PlayerConfig
 import com.xyoye.common_component.config.RouteTable
@@ -20,6 +21,7 @@ import com.xyoye.common_component.receiver.BatteryBroadcastReceiver
 import com.xyoye.common_component.receiver.HeadsetBroadcastReceiver
 import com.xyoye.common_component.receiver.PlayerReceiverListener
 import com.xyoye.common_component.receiver.ScreenBroadcastReceiver
+import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.enums.*
@@ -42,8 +44,10 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     //电量广播
     private lateinit var batteryReceiver: BatteryBroadcastReceiver
+
     //锁屏广播
     private lateinit var screenLockReceiver: ScreenBroadcastReceiver
+
     //耳机广播
     private lateinit var headsetReceiver: HeadsetBroadcastReceiver
 
@@ -85,6 +89,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     override fun onDestroy() {
+        beforePlayExit()
         dataBinding.danDanPlayer.release()
         unregisterReceiver()
         super.onDestroy()
@@ -94,12 +99,11 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         if (dataBinding.danDanPlayer.onBackPressed()) {
             return
         }
-        setResult(Activity.RESULT_OK)
         finish()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        return dataBinding.danDanPlayer.onKeyDown(keyCode) or super.onKeyDown(keyCode, event)
+        return dataBinding.danDanPlayer.onKeyDown(keyCode, event) or super.onKeyDown(keyCode, event)
     }
 
     override fun onScreenLocked() {
@@ -145,7 +149,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             }
             //退出播放
             observerPlayExit {
-                setResult(Activity.RESULT_OK)
                 finish()
             }
             observerRestart {
@@ -161,7 +164,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             }
             //绑定资源
             observerBindSource { sourcePath, isSubtitle ->
-                if (isSubtitle){
+                if (isSubtitle) {
                     params.subtitlePath = sourcePath
                 } else {
                     params.danmuPath = sourcePath
@@ -175,7 +178,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             //弹幕屏蔽
             observerDanmuBlock(
                 cloudBlock = viewModel.cloudDanmuBlockLiveData,
-                add = {keyword, isRegex -> viewModel.addDanmuBlock(keyword, isRegex) },
+                add = { keyword, isRegex -> viewModel.addDanmuBlock(keyword, isRegex) },
                 remove = { id -> viewModel.removeDanmuBlock(id) },
                 queryAll = { viewModel.localDanmuBlockLiveData }
             )
@@ -186,7 +189,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             setProgressObserver { position, duration ->
                 viewModel.addPlayHistory(params, position, duration)
             }
-            setUrl(params.videoPath, params.header)
+            val headerJson = params.getHttpHeaderJson()
+            val header = JsonHelper.parseJsonMap(headerJson)
+            setUrl(params.videoPath, header)
             start()
         }
 
@@ -229,6 +234,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         //是否使用SurfaceView
         PlayerInitializer.surfaceType =
             if (PlayerConfig.isUseSurfaceView()) SurfaceType.VIEW_SURFACE else SurfaceType.VIEW_TEXTURE
+        //视频速度
+        PlayerInitializer.Player.videoSpeed = PlayerConfig.getVideoSpeed()
 
         //VLCPlayer像素格式
         PlayerInitializer.Player.vlcPixelFormat =
@@ -265,22 +272,43 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     private fun showPlayErrorDialog() {
-        AlertDialog.Builder(this@PlayerActivity)
+        val isMagnetSource = playParams?.mediaType == MediaType.MAGNET_LINK
+
+        val tips = if (isMagnetSource) {
+            val taskLog = PlayTaskBridge.getTaskLog(playParams?.getPlayTaskId())
+            "播放失败，资源已失效或暂时无法访问，请尝试切换资源$taskLog"
+        } else {
+            "播放失败，请尝试更改播放器设置，或者切换其它播放内核"
+        }
+
+        val builder = AlertDialog.Builder(this@PlayerActivity)
             .setTitle("错误")
             .setCancelable(false)
-            .setMessage("播放失败，请尝试更改播放器设置，或者切换其它播放内核")
-            .setPositiveButton("播放器设置") { dialog, _ ->
+            .setMessage(tips)
+            .setNegativeButton("退出播放") { dialog, _ ->
+                dialog.dismiss()
+                this@PlayerActivity.finish()
+            }
+
+        if (isMagnetSource.not()) {
+            builder.setPositiveButton("播放器设置") { dialog, _ ->
                 dialog.dismiss()
                 ARouter.getInstance()
                     .build(RouteTable.User.SettingPlayer)
                     .navigation()
                 this@PlayerActivity.finish()
             }
-            .setNegativeButton("退出播放") { dialog, _ ->
-                dialog.dismiss()
-                this@PlayerActivity.finish()
-            }
-            .create()
-            .show()
+        }
+
+        builder.create().show()
+    }
+
+    private fun beforePlayExit() {
+        if (playParams == null)
+            return
+
+        if (playParams!!.mediaType == MediaType.MAGNET_LINK) {
+            PlayTaskBridge.sendTaskRemoveMsg(playParams!!.getPlayTaskId())
+        }
     }
 }

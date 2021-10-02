@@ -3,11 +3,13 @@ package com.xyoye.local_component.ui.activities.bind_danmu
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
+import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.data_component.bean.DanmuSearchBean
 import com.xyoye.data_component.bean.DanmuSourceBean
 import com.xyoye.data_component.data.DanmuData
 import com.xyoye.data_component.data.DanmuMatchData
@@ -77,7 +79,14 @@ class BindDanmuViewModel  @Inject constructor(
 
     fun searchDanmuSource(animeName: String, episodeId: String) {
         httpRequest<MutableList<DanmuMatchDetailData>>(viewModelScope) {
-            onStart { showLoading() }
+            onStart {
+                showLoading()
+
+                val searchBean = DanmuSearchBean(episodeId, animeName)
+                JsonHelper.toJson(searchBean)?.let {
+                    AppConfig.putLastSearchDanmuJson(it)
+                }
+            }
 
             api {
                 val fakeMatchData = mutableListOf<DanmuMatchDetailData>()
@@ -158,7 +167,8 @@ class BindDanmuViewModel  @Inject constructor(
                 //保存弹幕
                 val folderName = videoPath?.run { getParentFolderName(videoPath) }
                 //视频路径存在（即本地视频），将弹幕文件重命名为视频文件名，否则按弹幕标题命名
-                val fileName = if (videoPath == null) danmuFileName else "${getFileExtension(videoPath)}.xml"
+                val fileName =
+                    if (videoPath == null) danmuFileName else "${getFileNameNoExtension(videoPath)}.xml"
                 val danmuPath = DanmuUtils.saveDanmu(allDanmuData, folderName, fileName)
 
                 if (danmuPath.isNullOrEmpty()) {
@@ -172,7 +182,7 @@ class BindDanmuViewModel  @Inject constructor(
                     }
                 }
 
-                if (danmuPath != null){
+                if (danmuPath != null) {
                     return@api Pair(danmuPath, episodeId)
                 } else {
                     return@api null

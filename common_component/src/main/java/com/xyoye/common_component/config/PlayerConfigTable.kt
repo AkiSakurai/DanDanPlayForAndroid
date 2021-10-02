@@ -31,7 +31,7 @@ object PlayerConfigTable {
 
     //使用播放器类型
     @MMKVFiled
-    val usePlayerType = PlayerType.TYPE_IJK_PLAYER.value
+    val usePlayerType = PlayerType.TYPE_VLC_PLAYER.value
 
     //使用播放器像素格式
     @MMKVFiled
@@ -44,4 +44,8 @@ object PlayerConfigTable {
     //VLC内核硬件加速
     @MMKVFiled
     val useVLCHWDecoder = VLCHWDecode.HW_ACCELERATION_AUTO.value
+
+    //视频倍速
+    @MMKVFiled
+    val videoSpeed = 25
 }

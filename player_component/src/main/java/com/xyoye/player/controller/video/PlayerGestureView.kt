@@ -84,8 +84,9 @@ class PlayerGestureView(
             formatDuration(newPosition)
 
         val updateSecond: Int = ((newPosition - currentPosition) / 1000f).toInt()
+        val updateSecondText = if (updateSecond > 0) "+$updateSecond" else updateSecond.toString()
 
-        val updateText = "$newPositionFormat/$durationFormat\n${updateSecond}秒"
+        val updateText = "$newPositionFormat/$durationFormat\n${updateSecondText}秒"
         viewBinding.positionTv.text = updateText
     }
 

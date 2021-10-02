@@ -7,7 +7,7 @@ import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.DanmuUtilsModule
-import com.xyoye.common_component.utils.StreamHeaderUtil
+import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.PlayParams
@@ -57,10 +57,7 @@ class PlayerViewModel @Inject constructor(
                     playParams.danmuPath,
                     playParams.episodeId,
                     playParams.subtitlePath,
-                    StreamHeaderUtil.header2String(playParams.header),
-                    playParams.torrentPath,
-                    playParams.torrentFileIndex,
-                    playParams.torrentTitle
+                    JsonHelper.toJson(playParams.extra?.toMap())
                 )
             } else {
                 history[0].apply {
@@ -70,10 +67,7 @@ class PlayerViewModel @Inject constructor(
                     danmuPath = playParams.danmuPath
                     episodeId = playParams.episodeId
                     subtitlePath = playParams.subtitlePath
-                    header = StreamHeaderUtil.header2String(playParams.header)
-                    torrentPath = playParams.torrentPath
-                    torrentFileIndex = playParams.torrentFileIndex
-                    torrentTitle = playParams.torrentTitle
+                    JsonHelper.toJson(playParams.extra?.toMap())
                 }
             }
 

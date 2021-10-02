@@ -114,7 +114,7 @@ class DanmuView(
                 }
             }
             PlayState.STATE_BUFFERING_PLAYING -> {
-                if (isPrepared && isPaused) {
+                if (isPrepared && isPaused && mControlWrapper.isPlaying()) {
                     resume()
                 }
             }
@@ -150,11 +150,11 @@ class DanmuView(
         super.resume()
     }
 
-    fun seekTo(timeMs: Long, skip: Boolean) {
-        if (skip) {
-            seekTo(timeMs)
+    fun seekTo(timeMs: Long, isPlaying: Boolean) {
+        if (isPlaying) {
+            seekTo(timeMs + PlayerInitializer.Danmu.offsetPosition)
         } else {
-            mSeekPosition = timeMs
+            mSeekPosition = timeMs + PlayerInitializer.Danmu.offsetPosition
         }
     }
 
@@ -260,8 +260,7 @@ class DanmuView(
     }
 
     fun updateOffsetTime() {
-        val newPosition = currentTime + PlayerInitializer.Danmu.offsetPosition
-        seekTo(newPosition, mControlWrapper.isPlaying())
+        seekTo(currentTime, mControlWrapper.isPlaying())
     }
 
     fun updateMaxLine() {

@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Handler
 import com.alibaba.android.arouter.launcher.ARouter
 import com.tencent.bugly.Bugly
+import com.tencent.mmkv.MMKV
 import com.xyoye.common_component.BuildConfig
 import com.xyoye.common_component.utils.SecurityHelper
 
@@ -36,6 +37,7 @@ open class BaseApplication : Application() {
             ARouter.openLog()
             ARouter.openDebug()
         }
+        MMKV.initialize(this)
         ARouter.init(this)
         Bugly.init(
             applicationContext,

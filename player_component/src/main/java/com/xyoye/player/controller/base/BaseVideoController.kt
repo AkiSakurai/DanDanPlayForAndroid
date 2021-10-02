@@ -127,8 +127,8 @@ abstract class BaseVideoController(
         }
     }
 
-    override fun showController() {
-        if (!mIsShowing) {
+    override fun showController(ignoreShowing: Boolean) {
+        if (ignoreShowing || !mIsShowing) {
             mIsShowing = true
             startFadeOut()
             handleVisibilityChanged(true)

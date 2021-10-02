@@ -227,7 +227,7 @@ class SettingDanmuView(
                 viewBinding.danmuOffsetTimeLl.requestFocus()
 
                 val extraTimeText = viewBinding.danmuExtraTimeEt.text.toString()
-                val newOffsetSecond = if (extraTimeText.isEmpty()) 0f else extraTimeText.toFloat()
+                val newOffsetSecond = extraTimeText.toFloatOrNull() ?: 0f
 
                 PlayerInitializer.Danmu.offsetPosition = (newOffsetSecond * 1000).toLong()
                 updateOffsetEt()
@@ -314,7 +314,7 @@ class SettingDanmuView(
 
                 //输入为空，设置为五限制
                 val maxNumText = viewBinding.numberInputLimitEt.text.toString()
-                val newMaxNum = if (maxNumText.isEmpty()) 0 else maxNumText.toInt()
+                val newMaxNum = maxNumText.toIntOrNull() ?: 0
 
                 PlayerInitializer.Danmu.maxNum = newMaxNum
                 DanmuConfig.putDanmuMaxCount(newMaxNum)

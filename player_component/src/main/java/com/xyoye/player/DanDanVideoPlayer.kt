@@ -344,7 +344,7 @@ class DanDanVideoPlayer(
         return mVideoController?.onBackPressed() ?: false
     }
 
-    fun onKeyDown(keyCode: Int): Boolean {
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP -> {
                 mVideoController?.onVolumeKeyDown(true)
@@ -354,7 +354,7 @@ class DanDanVideoPlayer(
                 mVideoController?.onVolumeKeyDown(false)
                 return true
             }
-            else -> false
+            else -> mVideoController?.onKeyDown(keyCode, event) ?: false
         }
     }
 

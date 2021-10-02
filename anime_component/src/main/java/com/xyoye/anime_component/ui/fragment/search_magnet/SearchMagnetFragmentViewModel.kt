@@ -7,6 +7,7 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.RetrofitModule
+import com.xyoye.common_component.extension.torrentPath
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.storage.platform.AndroidPlatform
 import com.xyoye.common_component.utils.MagnetUtils
@@ -91,7 +92,7 @@ class SearchMagnetFragmentViewModel @Inject constructor(
                 searchResult.Resources?.forEach { magnetData ->
                     val hash = MagnetUtils.getMagnetHash(magnetData.Magnet)
                     magnetHistory
-                        .find { it.torrentPath == "$torrentDirPath/$hash.torrent" }
+                        .find { it.torrentPath() == "$torrentDirPath/$hash.torrent" }
                         ?.let { history ->
                             magnetData.position = history.videoPosition
                             magnetData.duration = history.videoDuration

@@ -13,7 +13,7 @@ object PlayerInitializer {
     var isOrientationEnabled = true
     var isEnableAudioFocus = true
     var isLooping = false
-    var playerType = PlayerType.TYPE_IJK_PLAYER
+    var playerType = PlayerType.TYPE_VLC_PLAYER
     var surfaceType = SurfaceType.VIEW_TEXTURE
     var screenScale = VideoScreenScale.SCREEN_SCALE_DEFAULT
 
@@ -26,6 +26,7 @@ object PlayerInitializer {
         var pixelFormat = PixelFormat.PIXEL_AUTO
         var vlcPixelFormat = VLCPixelFormat.PIXEL_RGB_32
         var vlcHWDecode = VLCHWDecode.HW_ACCELERATION_AUTO
+        var videoSpeed = 25
     }
 
     object Danmu {

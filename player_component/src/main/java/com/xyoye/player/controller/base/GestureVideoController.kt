@@ -23,7 +23,7 @@ abstract class GestureVideoController(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : BaseVideoController(context, attrs, defStyleAttr), View.OnTouchListener,
+) : TvVideoController(context, attrs, defStyleAttr), View.OnTouchListener,
     GestureDetector.OnGestureListener,
     GestureDetector.OnDoubleTapListener {
 
