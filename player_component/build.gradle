@@ -9,7 +9,6 @@ apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
-    buildToolsVersion rootProject.ext.android.buildToolsVersion
 
     defaultConfig {
         if (IS_APPLICATION_RUN.toBoolean()) {
