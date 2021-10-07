@@ -1,6 +1,5 @@
 package com.xyoye.local_component.ui.activities.local_media
 
-import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
@@ -19,7 +18,6 @@ import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.bean.PlayParams
-import com.xyoye.data_component.data.CommonTypeData
 import com.xyoye.data_component.data.SubtitleThunderData
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.entity.VideoEntity
@@ -27,10 +25,7 @@ import com.xyoye.data_component.enums.FileSortType
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.local_component.utils.SubtitleHashUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
 import javax.inject.Inject
@@ -44,6 +39,9 @@ class LocalMediaViewModel @Inject constructor(
     //当前是否在根目录
     val inRootFolder = ObservableBoolean()
 
+    //当前是否为搜索状态
+    val inSearchState = ObservableBoolean()
+
     //当前打开的目录名
     val currentFolderName = ObservableField<String>()
 
@@ -55,40 +53,16 @@ class LocalMediaViewModel @Inject constructor(
     val folderLiveData = MutableLiveData<MutableList<FolderBean>>()
     val fileLiveData = MediatorLiveData<MutableList<VideoEntity>>()
 
-    val filterLiveData = MutableLiveData<String?>()
     val sortLiveData = MutableLiveData<FileSortType>()
-    val filteredFileLiveData = MediatorLiveData<MutableList<VideoEntity>>()
 
     val playVideoLiveData = MutableLiveData<PlayParams>()
 
-    //临时的文件夹文件live data
-    private var folderFileLiveData: LiveData<MutableList<VideoEntity>>? = null
+    private var searchJob: Job? = null
+
+    //直接关联数据库的live data
+    private var databaseVideoLiveData: LiveData<MutableList<VideoEntity>>? = null
 
     init {
-        val fileDataObserver = { videoData:MutableList<VideoEntity>?, filter:String? ->
-            val filtered =
-                if (filter != null) {
-                    videoData?.filter {
-                        it.filePath.toLowerCase(Locale.ROOT)
-                            .contains(filter.toLowerCase(Locale.ROOT))
-                    }?.toMutableList()
-                }else
-                {
-                    videoData
-                }
-            if(filtered != null)
-                filteredFileLiveData.postValue(filtered)
-        }
-
-        filteredFileLiveData.addSource(fileLiveData) {
-            if(!inRootFolder.get())
-                fileDataObserver(it, filterLiveData.value)
-        }
-        filteredFileLiveData.addSource(filterLiveData) {
-            if(!inRootFolder.get())
-                fileDataObserver(fileLiveData.value, it)
-        }
-
         sortLiveData.value = FileSortType.valueOf(AppConfig.getLocalFileSortType())
     }
 
@@ -112,8 +86,8 @@ class LocalMediaViewModel @Inject constructor(
 
     fun listRoot() {
         inRootFolder.set(true)
+        inSearchState.set(false)
         refreshEnableLiveData.postValue(true)
-        filterLiveData.postValue(null)
 
         viewModelScope.launch {
             val refreshSuccess = refreshSystemVideo()
@@ -142,51 +116,51 @@ class LocalMediaViewModel @Inject constructor(
 
     fun listFolder(folderName: String, folderPath: String) {
         inRootFolder.set(false)
+        inSearchState.set(false)
         refreshEnableLiveData.postValue(false)
         currentFolderName.set(folderName)
         currentFolderPath.set(folderPath)
-        filterLiveData.postValue(null)
 
         viewModelScope.launch {
-            folderFileLiveData?.let {
+            databaseVideoLiveData?.let {
                 fileLiveData.removeSource(it)
             }
-            fileLiveData.removeSource(sortLiveData)
+            databaseVideoLiveData = DatabaseManager.instance.getVideoDao().getVideoInFolder(folderPath)
+            updateFolderFileLiveData()
+        }
+    }
 
-            folderFileLiveData = DatabaseManager.instance.getVideoDao().getVideoInFolder(folderPath)
-            val lastPlayHistory = queryLastPlayHistory()
-            val updateLiveDate = { videoData:MutableList<VideoEntity>, sortType: FileSortType ->
-                if (!inRootFolder.get()) {
-                        //是否为最后一次播放的文件
-                        lastPlayHistory?.apply {
-                            videoData.find { it.filePath == url }?.isLastPlay = true
-                        }
+    fun exitSearchVideo() {
+        inSearchState.set(false)
+        if (inRootFolder.get()) {
+            folderLiveData.postValue(folderLiveData.value)
+        } else {
+            val folderName = currentFolderName.get()!!
+            val folderPath = currentFolderPath.get()!!
+            listFolder(folderName, folderPath)
+        }
+    }
 
-                        //视频按文件名排序
-                        when(sortType) {
-                            FileSortType.DATE -> {
-                                videoData.sortByDescending { getFileDate(it.filePath) }
-                            }
-                            else -> {
-                                videoData.sortWith(FileComparator(
-                                    value = { getFileName(it.filePath) },
-                                    isDirectory = { false }
-                                ))
-                            }
-                        }
-                        fileLiveData.postValue(videoData)
-                    }
+    fun searchVideo(keyword: String) {
+        inSearchState.set(true)
+        refreshEnableLiveData.postValue(false)
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            databaseVideoLiveData?.let {
+                fileLiveData.removeSource(it)
             }
 
-            fileLiveData.addSource(folderFileLiveData!!) { videoData ->
-                updateLiveDate(videoData, sortLiveData.value!!)
+            val searchWord = "%$keyword%"
+            databaseVideoLiveData = if (inRootFolder.get()) {
+                DatabaseManager.instance.getVideoDao().searchVideo(searchWord)
+            } else {
+                DatabaseManager.instance.getVideoDao().searchVideoInFolder(
+                    searchWord,
+                    currentFolderPath.get()
+                )
             }
-
-            fileLiveData.addSource(sortLiveData) { sortType ->
-                folderFileLiveData?.value?.let { videoData ->
-                    updateLiveDate(videoData, sortType)
-                }
-            }
+            updateFolderFileLiveData(inRootFolder.get())
         }
     }
 
@@ -292,6 +266,47 @@ class LocalMediaViewModel @Inject constructor(
         viewModelScope.launch {
             DatabaseManager.instance.getVideoDao()
                 .updateSubtitle(filePath, null)
+        }
+    }
+
+    private suspend fun updateFolderFileLiveData(updateInRootPath: Boolean = false) {
+        databaseVideoLiveData ?: return
+
+        fileLiveData.removeSource(sortLiveData)
+
+        val lastPlayHistory = queryLastPlayHistory()
+
+        val updateLiveDate = { videoData:MutableList<VideoEntity>, sortType: FileSortType ->
+            if (updateInRootPath || inRootFolder.get().not()) {
+                //是否为最后一次播放的文件
+                lastPlayHistory?.apply {
+                    videoData.find { it.filePath == url }?.isLastPlay = true
+                }
+
+                //视频按文件名排序
+                when(sortType) {
+                    FileSortType.DATE -> {
+                        videoData.sortByDescending { getFileDate(it.filePath) }
+                    }
+                    else -> {
+                        videoData.sortWith(FileComparator(
+                            value = { getFileName(it.filePath) },
+                            isDirectory = { false }
+                        ))
+                    }
+                }
+                fileLiveData.postValue(videoData)
+            }
+        }
+
+        fileLiveData.addSource(databaseVideoLiveData!!) { videoData ->
+            updateLiveDate(videoData, sortLiveData.value!!)
+        }
+
+        fileLiveData.addSource(sortLiveData) { sortType ->
+            databaseVideoLiveData?.value?.let { videoData ->
+                updateLiveDate(videoData, sortType)
+            }
         }
     }
 
