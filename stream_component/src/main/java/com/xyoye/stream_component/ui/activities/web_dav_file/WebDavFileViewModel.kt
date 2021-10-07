@@ -20,6 +20,7 @@ import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.FileHashUtils
 import com.xyoye.stream_component.utils.PlayHistoryUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.xyoye.stream_component.utils.web_dav.DavClientFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -47,7 +48,10 @@ class WebDavFileViewModel @Inject constructor(
     private lateinit var sardine: OkHttpSardine
 
     fun listStorageRoot(serverData: MediaLibraryEntity) {
-        sardine = OkHttpSardine(UnsafeOkHttpClient.client)
+        sardine = DavClientFactory.getInstance(
+            UnsafeOkHttpClient.client,
+            serverData.webDavStrict
+        )
 
         if (!serverData.account.isNullOrEmpty()) {
             val account = serverData.account!!
