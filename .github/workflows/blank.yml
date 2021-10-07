@@ -25,7 +25,7 @@ jobs:
       - name: Build with Gradle
         env: # Set the secret as an input
           ANDROID_KEY: ${{ secrets.ANDROID_KEY }}
-        run: echo "${ANDROID_KEY}" | base64 -d  > dandanplay.jks && KEYSTORE_PASS=123456 ALIAS_NAME=debug ALIAS_PASS=123456 ./gradlew assembleBgmRelease
+        run: echo "${ANDROID_KEY}" | base64 -d  > gradle/assemble/dandanplay.jks && KEYSTORE_PASS=123456 ALIAS_NAME=debug ALIAS_PASS=123456 ./gradlew assembleBgmRelease
       - name: Cleanup Gradle Cache
         # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
         # Restoring these files from a GitHub Actions cache might cause problems for future builds.
