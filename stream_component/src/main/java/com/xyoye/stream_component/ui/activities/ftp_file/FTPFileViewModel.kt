@@ -249,6 +249,7 @@ class FTPFileViewModel @Inject constructor(
         )
 
         val historyEntity = PlayHistoryUtils.getPlayHistory(playUrl, MediaType.FTP_SERVER)
+        playParams.currentPosition = historyEntity?.videoPosition ?: 0
 
         if (historyEntity?.danmuPath != null){
             //从播放记录读取弹幕

@@ -83,6 +83,7 @@ class RemoteFileViewModel @Inject constructor(
             )
 
             val historyEntity = PlayHistoryUtils.getPlayHistory(videoUrl, MediaType.REMOTE_STORAGE)
+            playParams.currentPosition = historyEntity?.videoPosition ?: 0
 
             if (historyEntity?.danmuPath != null) {
                 //从播放记录读取弹幕
