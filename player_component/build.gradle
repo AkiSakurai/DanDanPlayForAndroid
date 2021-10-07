@@ -89,5 +89,7 @@ dependencies {
     implementation rootProject.ext.dependencies["exoplayer-smoothstraming"]
     implementation rootProject.ext.dependencies["hilt"]
     kapt rootProject.ext.dependencies["hilt-compiler"]
+    implementation rootProject.ext.dependencies["exoplayer-rtmp"]
+
     implementation 'org.videolan.android:libvlc-all:3.3.11'
 }
