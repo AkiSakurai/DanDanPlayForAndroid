@@ -64,6 +64,7 @@ class TrackHelper(private val mPlayerEventListener: VideoPlayerEventListener) {
             }
         }
 
+
         audioTrackData.clear()
         subtitleTrackData.clear()
         for (groupArrayIndex in 0 until trackInfo.rendererCount) {
