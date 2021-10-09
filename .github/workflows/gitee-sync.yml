@@ -2,7 +2,7 @@ name: gitee-sync
 on:
   push:
     branches-ignore:
-      - 'AkiSakurai/DanDanPlayForAndroid'
+      - 'personalized'
 
 jobs:
   repo-sync:

@@ -6,7 +6,7 @@ on:
     branches:
       - master
     branches-ignore:
-      - 'AkiSakurai/DanDanPlayForAndroid'
+      - 'personalized'
 
 jobs:
   package:
