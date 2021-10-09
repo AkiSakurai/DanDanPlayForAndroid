@@ -5,6 +5,8 @@ on:
   push:
     tags:
       - "*"
+    branches-ignore:
+      - 'AkiSakurai/DanDanPlayForAndroid'
 
 jobs:
   package:
