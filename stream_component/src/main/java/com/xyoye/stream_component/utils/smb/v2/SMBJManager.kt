@@ -151,10 +151,10 @@ class SMBJManager private constructor() : SmbManager {
                 //忽略这两个文件夹
                 if (information.fileName == "." || information.fileName == "..")
                     continue
-                //拼接子文件路径
-                val childPath = "$smbPath\\${information.fileName}"
+
                 //获取文件信息
-                val isDirectory = SMBFileHelper.isDirectory(diskShare!!, childPath)
+                val isDirectory = SMBFileHelper.isDirectory(information)
+
                 val fileSize = if (isDirectory) 0L else information.endOfFile
                 smbFileList.add(
                         SMBFile(information.fileName, fileSize, isDirectory)
