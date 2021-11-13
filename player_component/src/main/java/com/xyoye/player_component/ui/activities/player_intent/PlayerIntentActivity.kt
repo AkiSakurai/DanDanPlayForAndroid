@@ -12,6 +12,7 @@ import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.player_component.BR
+import com.xyoye.player_component.ExtendPermissionGrantService
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ActivityPlayerIntentBinding
 
@@ -49,6 +50,13 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
             viewModel.isParseError.set(true)
             return
         }
+
+        Intent(this, ExtendPermissionGrantService::class.java)
+            .apply {
+                setDataAndType(videoUri,"video/mp4" )
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                startService(this)
+            }
 
         val videoTitle = UriUtils.queryVideoTitle(this, videoUri)
             ?: getFileName(videoUriText)

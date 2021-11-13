@@ -1,10 +1,13 @@
 package com.xyoye.player
 
+import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.PointF
 import android.media.AudioManager
+import android.net.Uri
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.KeyEvent

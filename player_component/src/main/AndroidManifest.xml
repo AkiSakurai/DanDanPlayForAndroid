@@ -12,6 +12,7 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/DialogActivityTheme"/>
 
+        <service android:name=".ExtendPermissionGrantService" />
         <activity android:name=".ui.activities.player_intent.PlayerIntentActivity"
             android:configChanges="orientation|screenSize">
             <!-- http -->
