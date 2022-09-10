@@ -12,6 +12,7 @@ import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
+import com.xyoye.common_component.weight.StorageAdapter
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
@@ -20,8 +21,6 @@ import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityWebDavFileBinding
 import dagger.hilt.android.AndroidEntryPoint
-import com.xyoye.stream_component.utils.StorageAdapter
-
 
 @Route(path = RouteTable.Stream.WebDavFile)
 @AndroidEntryPoint

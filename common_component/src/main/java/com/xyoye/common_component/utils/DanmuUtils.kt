@@ -23,7 +23,7 @@ class DanmuUtilsModule @Inject constructor(val Retrofit: RetrofitModule) {
         private const val MAX_DANMU_CHECK_LINE = 15
         private const val DANMU_TAG = "<d p="
     }
-    
+
     fun saveDanmu(fileName: String, inputStream: InputStream): String? {
         val danmuFile = File(PathHelper.getDanmuDirectory(), fileName.formatFileName())
         if (danmuFile.exists()) {
