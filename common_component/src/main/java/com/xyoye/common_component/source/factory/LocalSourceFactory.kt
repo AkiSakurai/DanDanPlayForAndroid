@@ -23,7 +23,7 @@ object LocalSourceFactory {
         val video = videoSources.getOrNull(builder.index) ?: return null
 
         val (episodeId, danmuPath) = getVideoDanmu(DanmuUtils, video)
-        val subtitlePath = getVideoSubtitle(video)
+        val subtitlePath = getVideoSubtitle(DanmuUtils, video)
         val position = getHistoryPosition(video)
         return LocalMediaSource(
             DanmuUtils,
@@ -50,7 +50,7 @@ object LocalSourceFactory {
             return Pair(video.danmuId, video.danmuPath)
         }
         //从本地找同名弹幕
-        if (DanmuConfig.isAutoLoadLocalDanmu()) {
+        if (DanmuConfig.isAutoLoadSameNameDanmu()) {
             DanmuUtils.findLocalDanmuByVideo(video.filePath)?.let {
                 return Pair(0, it)
             }
@@ -59,18 +59,23 @@ object LocalSourceFactory {
     }
 
 
-    private fun getVideoSubtitle(video: VideoEntity): String? {
+    private suspend fun getVideoSubtitle(DanmuUtils: DanmuUtilsModule, video: VideoEntity): String? {
         //当前视频已绑定字幕
         if (video.subtitlePath != null) {
             return video.subtitlePath
         }
         //自动加载本地同名字幕
-        if (SubtitleConfig.isAutoLoadLocalSubtitle()) {
+        if (SubtitleConfig.isAutoLoadSameNameSubtitle()) {
             SubtitleUtils.findLocalSubtitleByVideo(video.filePath)?.let {
                 return it
             }
         }
 
+        if (SubtitleConfig.isAutoMatchSubtitle()) {
+            SubtitleUtils.matchSubtitleSilence(DanmuUtils.Retrofit, video.filePath)?.let {
+                return it
+            }
+        }
         return null
     }
 }

@@ -53,7 +53,7 @@ object RemoteSourceFactory {
         }
 
         //自动匹配同文件夹内同名弹幕
-        if (DanmuConfig.isAutoLoadDanmuNetworkStorage()) {
+        if (DanmuConfig.isAutoLoadSameNameDanmu()) {
             try {
                 val danmuResponseBody = DanmuUtils.Retrofit.remoteService.downloadDanmu(videoData.Hash)
                 val videoName = videoData.getEpisodeName()
@@ -82,7 +82,7 @@ object RemoteSourceFactory {
         }
 
         //自动匹配同文件夹内同名字幕
-        if (SubtitleConfig.isAutoLoadSubtitleNetworkStorage()) {
+        if (SubtitleConfig.isAutoLoadSameNameSubtitle()) {
             try {
                 val subtitleData = DanmuUtils.Retrofit.remoteService.searchSubtitle(videoData.Id)
                 if (subtitleData.subtitles.isNotEmpty()) {

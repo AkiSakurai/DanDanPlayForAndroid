@@ -79,7 +79,7 @@ object WebDavSourceFactory {
         }
 
         //匹配同文件夹内同名弹幕
-        if (DanmuConfig.isAutoLoadDanmuNetworkStorage()) {
+        if (DanmuConfig.isAutoLoadSameNameDanmu()) {
             val danmuPath = findAndDownloadDanmu(
                 DanmuUtils,
                 davResource,
@@ -109,7 +109,8 @@ object WebDavSourceFactory {
         }
 
         //匹配同文件夹内同名字幕
-        if (SubtitleConfig.isAutoLoadSubtitleNetworkStorage()) {
+
+        if (SubtitleConfig.isAutoLoadSameNameSubtitle()) {
             val subtitlePath = findAndDownloadSubtitle(DanmuUtils, davResource, extSources, rootPath, header)
             if (subtitlePath != null) {
                 return subtitlePath
