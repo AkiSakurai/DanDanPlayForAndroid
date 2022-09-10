@@ -15,8 +15,8 @@ import java.util.concurrent.TimeUnit
 
 class DefaultRetrofit private constructor() {
     companion object {
-        private const val baseUrl = "https://api.acplay.net/"
-        private const val resUrl = "http://res.acplay.net/"
+        private const val baseUrl = "https://api.dandanplay.net/"
+        private const val resUrl = "http://res.dandanplay.net/"
         private const val shooterUrl = "http://api.assrt.net/"
         private const val torrentUrl = "https://m2t.chinacloudsites.cn/"
         private const val remoteUrl = "http://127.0.0.1:80/"
