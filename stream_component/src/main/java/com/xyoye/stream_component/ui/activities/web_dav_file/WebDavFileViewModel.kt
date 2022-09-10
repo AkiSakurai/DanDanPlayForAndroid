@@ -174,24 +174,6 @@ class WebDavFileViewModel @Inject constructor(
         }
     }
 
-    fun unbindDanmu(uniqueKey: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            DatabaseManager.instance.getPlayHistoryDao().updateDanmuByKey(
-                uniqueKey, MediaType.WEBDAV_SERVER, null, 0
-            )
-            refreshDirectory()
-        }
-    }
-
-    fun unbindSubtitle(uniqueKey: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            DatabaseManager.instance.getPlayHistoryDao().updateSubtitleByKey(
-                uniqueKey, MediaType.WEBDAV_SERVER, null
-            )
-            refreshDirectory()
-        }
-    }
-
     private fun parseAddress(serverUrl: String): Boolean {
         val schemeStart = serverUrl.indexOf("//")
         if (schemeStart < 0) {
