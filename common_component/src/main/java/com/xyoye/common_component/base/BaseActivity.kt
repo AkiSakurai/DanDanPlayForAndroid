@@ -22,8 +22,10 @@ abstract class BaseActivity<VM : BaseViewModel, V : ViewDataBinding> : BaseAppCo
     protected val viewModel: VM by lazy {
         ViewModelProvider(
             viewModelStore,
-            (this as HasDefaultViewModelProviderFactory).defaultViewModelProviderFactory
-        ).get(viewModelInit.clazz)
+            (this as HasDefaultViewModelProviderFactory).defaultViewModelProviderFactory,
+            (this as HasDefaultViewModelProviderFactory).defaultViewModelCreationExtras,
+
+            ).get(viewModelInit.clazz)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

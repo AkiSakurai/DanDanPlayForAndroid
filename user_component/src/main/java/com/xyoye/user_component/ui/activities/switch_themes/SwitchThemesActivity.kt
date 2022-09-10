@@ -28,7 +28,7 @@ class SwitchThemesActivity : BaseActivity<SwitchThemesViewModel, ActivitySwitchT
         title = "深色模式"
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_switch_theme, menu)
         return super.onCreateOptionsMenu(menu)
     }

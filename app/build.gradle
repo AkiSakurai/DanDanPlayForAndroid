@@ -64,5 +64,6 @@ dependencies {
         implementation project(path: ':stream_component')
     }
     implementation rootProject.ext.dependencies["hilt"]
+
     kapt rootProject.ext.dependencies["hilt-compiler"]
 }

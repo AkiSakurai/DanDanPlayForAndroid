@@ -217,22 +217,22 @@ class ExpandableLayout : FrameLayout {
     private inner class ExpansionListener(val targetExpansion: Float) : Animator.AnimatorListener {
         private var canceled = false
 
-        override fun onAnimationStart(animation: Animator?) {
+        override fun onAnimationStart(animation: Animator) {
             currentState = if (targetExpansion == 0f) State.COLLAPSED else State.EXPANDING
         }
 
-        override fun onAnimationEnd(animation: Animator?) {
+        override fun onAnimationEnd(animation: Animator) {
             if (!canceled) {
                 currentState = if (targetExpansion == 0f) State.COLLAPSED else State.EXPANDED
                 setExpansion(targetExpansion)
             }
         }
 
-        override fun onAnimationCancel(animation: Animator?) {
+        override fun onAnimationCancel(animation: Animator) {
             canceled = true
         }
 
-        override fun onAnimationRepeat(animation: Animator?) {
+        override fun onAnimationRepeat(animation: Animator) {
         }
 
     }

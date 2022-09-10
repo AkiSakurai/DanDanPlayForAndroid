@@ -92,10 +92,10 @@ class WebViewActivity : BaseActivity<WebViewViewModel, ActivityWebViewBinding>()
             }
         }
 
-        dataBinding.webView.loadUrl(url)
+        dataBinding.webView.loadUrl(url!!)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (isSelectMode) {
             menuInflater.inflate(R.menu.menu_web_view, menu)
         }

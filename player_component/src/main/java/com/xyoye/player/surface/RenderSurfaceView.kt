@@ -21,19 +21,19 @@ class RenderSurfaceView(context: Context) : SurfaceView(context), InterSurfaceVi
     private val mSurfaceCallback = object : SurfaceHolder.Callback {
         var hasSurfaceDestroyedBefore = false
 
-        override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+        override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
 
         }
 
-        override fun surfaceDestroyed(holder: SurfaceHolder?) {
-            if (this@RenderSurfaceView::mVideoPlayer.isInitialized && holder != null) {
+        override fun surfaceDestroyed(holder: SurfaceHolder) {
+            if (this@RenderSurfaceView::mVideoPlayer.isInitialized ) {
                 hasSurfaceDestroyedBefore = true
                 mVideoPlayer.setSurface(null)
             }
         }
 
-        override fun surfaceCreated(holder: SurfaceHolder?) {
-            if (this@RenderSurfaceView::mVideoPlayer.isInitialized && holder != null) {
+        override fun surfaceCreated(holder: SurfaceHolder) {
+            if (this@RenderSurfaceView::mVideoPlayer.isInitialized) {
                 mVideoPlayer.setSurface(holder.surface)
                 if(hasSurfaceDestroyedBefore) {
                     hasSurfaceDestroyedBefore = false

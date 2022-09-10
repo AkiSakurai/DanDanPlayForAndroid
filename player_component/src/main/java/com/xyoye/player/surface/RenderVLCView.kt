@@ -28,7 +28,7 @@ class RenderVLCView(
     private val surfaceCallback: SurfaceHolder.Callback = object : SurfaceHolder.Callback {
         var hasSurfaceDestroyedBefore = false
 
-        override fun surfaceCreated(holder: SurfaceHolder?) {
+        override fun surfaceCreated(holder: SurfaceHolder) {
             if(hasSurfaceDestroyedBefore) {
                 mVideoPlayer.attachRenderView(vlcLayout)
                 hasSurfaceDestroyedBefore = false
@@ -43,10 +43,10 @@ class RenderVLCView(
             }
         }
 
-        override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+        override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
         }
 
-        override fun surfaceDestroyed(holder: SurfaceHolder?) {
+        override fun surfaceDestroyed(holder: SurfaceHolder) {
             hasSurfaceDestroyedBefore = true
         }
     }

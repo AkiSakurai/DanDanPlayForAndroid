@@ -43,7 +43,7 @@ abstract class BaseBottomDialog<T : ViewDataBinding> : BottomSheetDialogFragment
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        mDialog = AppCompatDialog(context, theme)
+        mDialog = AppCompatDialog(requireActivity(), theme)
         if (DialogFragmentHelper.isArgumentInvalid(arguments)) {
             //如果弹窗被重建，关闭弹窗
             dismiss()

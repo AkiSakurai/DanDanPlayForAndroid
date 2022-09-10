@@ -118,6 +118,8 @@ class PlayerBottomView(
             PlayState.STATE_COMPLETED -> {
                 viewBinding.playIv.isSelected = mControlWrapper.isPlaying()
             }
+
+            else -> {}
         }
     }
 

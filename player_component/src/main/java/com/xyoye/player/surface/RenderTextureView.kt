@@ -23,19 +23,19 @@ class RenderTextureView(context: Context) : TextureView(context), InterSurfaceVi
 
     private val listener = object : SurfaceTextureListener {
         override fun onSurfaceTextureSizeChanged(
-            surface: SurfaceTexture?,
+            surface: SurfaceTexture,
             width: Int,
             height: Int
         ) {
         }
 
-        override fun onSurfaceTextureUpdated(surface: SurfaceTexture?) {}
+        override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
 
-        override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?) = false
+        override fun onSurfaceTextureDestroyed(surface: SurfaceTexture) = false
 
-        override fun onSurfaceTextureAvailable(surface: SurfaceTexture?, width: Int, height: Int) {
+        override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
             if (mSurfaceTexture != null) {
-                surfaceTexture = mSurfaceTexture
+               setSurfaceTexture(mSurfaceTexture!!)
             } else {
                 mSurfaceTexture = surfaceTexture
                 mSurface = Surface(surfaceTexture)

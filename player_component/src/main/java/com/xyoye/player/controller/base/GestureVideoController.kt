@@ -55,11 +55,11 @@ abstract class GestureVideoController(
         mCurrentPlayState = playState
     }
 
-    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+    override fun onTouch(v: View?, event: MotionEvent): Boolean {
         return mGestureDetector.onTouchEvent(event)
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!mGestureDetector.onTouchEvent(event)) {
             when (event?.action) {
                 MotionEvent.ACTION_UP -> {
@@ -79,21 +79,21 @@ abstract class GestureVideoController(
     }
 
     override fun onFling(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
+        e1: MotionEvent,
+        e2: MotionEvent,
         velocityX: Float,
         velocityY: Float
     ) = false
 
-    override fun onLongPress(e: MotionEvent?) {}
+    override fun onLongPress(e: MotionEvent) {}
 
-    override fun onShowPress(e: MotionEvent?) {}
+    override fun onShowPress(e: MotionEvent) {}
 
-    override fun onDoubleTapEvent(e: MotionEvent?) = false
+    override fun onDoubleTapEvent(e: MotionEvent) = false
 
-    override fun onSingleTapUp(e: MotionEvent?) = false
+    override fun onSingleTapUp(e: MotionEvent) = false
 
-    override fun onDown(e: MotionEvent?): Boolean {
+    override fun onDown(e: MotionEvent): Boolean {
         if (!isNormalPlayState() or context.isScreenEdge(e)) {
             return true
         }
@@ -107,14 +107,14 @@ abstract class GestureVideoController(
         return true
     }
 
-    override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+    override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
         if (isNormalPlayState()) {
             mControlWrapper.toggleVisible()
         }
         return true
     }
 
-    override fun onDoubleTap(e: MotionEvent?): Boolean {
+    override fun onDoubleTap(e: MotionEvent): Boolean {
         if (!isLocked() and isNormalPlayState()) {
             togglePlay()
         }
@@ -122,8 +122,8 @@ abstract class GestureVideoController(
     }
 
     override fun onScroll(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
+        e1: MotionEvent,
+        e2: MotionEvent,
         distanceX: Float,
         distanceY: Float
     ): Boolean {
