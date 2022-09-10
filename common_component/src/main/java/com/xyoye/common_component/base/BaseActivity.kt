@@ -24,7 +24,6 @@ abstract class BaseActivity<VM : BaseViewModel, V : ViewDataBinding> : BaseAppCo
             viewModelStore,
             (this as HasDefaultViewModelProviderFactory).defaultViewModelProviderFactory,
             (this as HasDefaultViewModelProviderFactory).defaultViewModelCreationExtras,
-
             ).get(viewModelInit.clazz)
     }
 

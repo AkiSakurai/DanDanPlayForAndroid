@@ -22,8 +22,9 @@ abstract class BaseFragment<VM : BaseViewModel, V : ViewDataBinding> : BaseAppFr
     protected val viewModel: VM by lazy {
         ViewModelProvider(
             viewModelStore,
-            (this as HasDefaultViewModelProviderFactory).defaultViewModelProviderFactory
-        ).get(viewModelInit.clazz)
+            (this as HasDefaultViewModelProviderFactory).defaultViewModelProviderFactory,
+            (this as HasDefaultViewModelProviderFactory).defaultViewModelCreationExtras,
+            ).get(viewModelInit.clazz)
     }
 
     override fun onCreateView(
