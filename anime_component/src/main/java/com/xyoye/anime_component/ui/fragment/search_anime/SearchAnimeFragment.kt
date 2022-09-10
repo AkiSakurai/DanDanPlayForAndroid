@@ -12,13 +12,11 @@ import com.xyoye.anime_component.ui.adapter.setNewAnimeData
 import com.xyoye.common_component.adapter.BaseAdapter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
-import com.xyoye.data_component.data.AnimeData
 import com.xyoye.data_component.data.CommonTypeData
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -114,7 +112,6 @@ class SearchAnimeFragment :
             layoutManager = grid(viewModel.screenSpanCount)
 
             adapter = buildAdapter {
-                initData(viewModel.sortTypeData)
 
                 addItemDecoration(ItemDecorationSpace(dp2px(2), 0))
 
@@ -136,6 +133,8 @@ class SearchAnimeFragment :
                     }
                 }
             }
+
+            setData(viewModel.sortTypeData)
         }
 
         dataBinding.animeRv.apply {

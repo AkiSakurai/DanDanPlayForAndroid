@@ -44,6 +44,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
     private var selectAllItem: MenuItem? = null
     private lateinit var mediaType: MediaType
     private lateinit var mTitleText: String
+    private val mHistoryList = mutableListOf<PlayHistoryEntity>()
 
     override fun initViewModel() =
         ViewModelInit(
@@ -92,7 +93,9 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
         viewModel.initHistoryType(mediaType)
         viewModel.showAddButton.set(mediaType == MediaType.MAGNET_LINK || mediaType == MediaType.STREAM_LINK)
         viewModel.playHistoryLiveData.observe(this) {
-            dataBinding.playHistoryRv.setData(it)
+            mHistoryList.clear()
+            mHistoryList.addAll(it)
+            dataBinding.playHistoryRv.setData(mHistoryList)
         }
     }
 
@@ -117,10 +120,10 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
             viewModel.removeHistory(historyList)
         } else if (item.itemId == R.id.select_all_history_item) {
             //全选记录
-            viewModel.playHistoryLiveData.value?.forEach {
+            mHistoryList.forEach {
                 it.checked = true
             }
-            dataBinding.playHistoryRv.adapter?.notifyDataSetChanged()
+            dataBinding.playHistoryRv.setData(mHistoryList)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -282,7 +285,6 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
 
         removeItem?.isVisible = isEditMode
         selectAllItem?.isVisible = isEditMode
-        dataBinding.playHistoryRv.adapter?.notifyDataSetChanged()
 
         title = if (isEditMode) {
             "删除播放记录"
@@ -295,5 +297,6 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                 it.checked = false
             }
         }
+        dataBinding.playHistoryRv.setData(mHistoryList)
     }
 }
