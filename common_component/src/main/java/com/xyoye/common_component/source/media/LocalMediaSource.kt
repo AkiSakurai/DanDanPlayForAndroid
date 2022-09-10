@@ -1,8 +1,9 @@
 package com.xyoye.common_component.source.media
 
-import com.xyoye.common_component.source.MediaSource
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.source.helper.LocalMediaSourceHelper
+import com.xyoye.common_component.source.inter.ExtraSource
+import com.xyoye.common_component.source.inter.GroupSource
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.MediaType
@@ -19,7 +20,7 @@ class LocalMediaSource private constructor(
     private var danmuPath: String?,
     private var episodeId: Int,
     private var subtitlePath: String?
-) : MediaSource(index, videoSources) {
+) : GroupVideoSource(index, videoSources), ExtraSource {
 
     companion object {
 
@@ -60,7 +61,6 @@ class LocalMediaSource private constructor(
 
     override fun setDanmuPath(path: String) {
         danmuPath = path
-        videoSources[index].danmuPath = path
     }
 
     override fun getEpisodeId(): Int {
@@ -69,7 +69,6 @@ class LocalMediaSource private constructor(
 
     override fun setEpisodeId(id: Int) {
         episodeId = id
-        videoSources[index].danmuId = id
     }
 
     override fun getSubtitlePath(): String? {
@@ -78,7 +77,6 @@ class LocalMediaSource private constructor(
 
     override fun setSubtitlePath(path: String) {
         subtitlePath = path
-        videoSources[index].subtitlePath = path
     }
 
     override fun getHttpHeader(): Map<String, String>? {
@@ -95,7 +93,7 @@ class LocalMediaSource private constructor(
         } ?: ""
     }
 
-    override suspend fun indexSource(index: Int): MediaSource? {
+    override suspend fun indexSource(index: Int): GroupSource? {
         if (index in videoSources.indices)
             return build(DanmuUtils, index, videoSources)
         return null

@@ -5,7 +5,8 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
-import com.xyoye.common_component.source.MediaSource
+import com.xyoye.common_component.source.inter.ExtraSource
+import com.xyoye.common_component.source.inter.VideoSource
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.DanmuUtilsModule
 import com.xyoye.common_component.utils.JsonHelper
@@ -34,7 +35,7 @@ class PlayerViewModel @Inject constructor(
     val localDanmuBlockLiveData = DatabaseManager.instance.getDanmuBlockDao().getAll(false)
     val cloudDanmuBlockLiveData = DatabaseManager.instance.getDanmuBlockDao().getAll(true)
 
-    fun addPlayHistory(source: MediaSource?, position: Long, duration: Long) {
+    fun addPlayHistory(source: VideoSource?, position: Long, duration: Long) {
         source ?: return
 
         GlobalScope.launch(context = Dispatchers.IO) {
@@ -46,13 +47,22 @@ class PlayerViewModel @Inject constructor(
             val history = DatabaseManager.instance.getPlayHistoryDao()
                 .getPlayHistory(videoUrl, source.getMediaType())
 
+            var sourceDanmuPath : String? = null
+            var sourceEpisodeId = 0
+            var sourceSubtitlePath: String? = null
+            if (source is ExtraSource) {
+                sourceDanmuPath = source.getDanmuPath()
+                sourceEpisodeId = source.getEpisodeId()
+                sourceSubtitlePath = source.getSubtitlePath()
+            }
+
             val historyEntity = history?.apply {
                 videoPosition = position
                 videoDuration = duration
                 playTime = Date()
-                danmuPath = source.getDanmuPath()
-                episodeId = source.getEpisodeId()
-                subtitlePath = source.getSubtitlePath()
+                danmuPath = sourceDanmuPath
+                episodeId = sourceEpisodeId
+                subtitlePath = sourceSubtitlePath
                 JsonHelper.toJson(source.getHttpHeader())
             } ?: PlayHistoryEntity(
                 0,
@@ -62,9 +72,9 @@ class PlayerViewModel @Inject constructor(
                 position,
                 duration,
                 Date(),
-                source.getDanmuPath(),
-                source.getEpisodeId(),
-                source.getSubtitlePath(),
+                sourceDanmuPath,
+                sourceEpisodeId,
+                sourceSubtitlePath,
                 JsonHelper.toJson(source.getHttpHeader())
             )
 

@@ -9,7 +9,7 @@ import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
-import com.xyoye.common_component.source.MediaSourceManager
+import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.media.WebDavMediaSource
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
@@ -139,7 +139,7 @@ class WebDavFileViewModel @Inject constructor(
                 ToastCenter.showError("播放失败，找不到播放资源")
                 return@launch
             }
-            MediaSourceManager.getInstance().setSource(mediaSource)
+            VideoSourceManager.getInstance().setSource(mediaSource)
             playLiveData.postValue(Any())
         }
     }
