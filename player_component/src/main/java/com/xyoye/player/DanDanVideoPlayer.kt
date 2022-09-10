@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.xyoye.cache.CacheManager
 import com.xyoye.common_component.source.inter.VideoSource
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
@@ -90,6 +91,7 @@ class DanDanVideoPlayer(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         mVideoController?.destroy()
+        CacheManager.release()
         release()
     }
 
@@ -291,7 +293,8 @@ class DanDanVideoPlayer(
 
     private fun startPrepare(): Boolean {
         return if (videoSource.getVideoUrl().isNotEmpty()) {
-            mVideoPlayer.setDataSource(videoSource.getVideoUrl(), videoSource.getHttpHeader())
+            val cacheUrl = CacheManager.getCacheUrl(videoSource.getVideoUrl(), videoSource.getHttpHeader())
+            mVideoPlayer.setDataSource(cacheUrl)
             mVideoPlayer.prepareAsync()
             setPlayState(PlayState.STATE_PREPARING)
             true
