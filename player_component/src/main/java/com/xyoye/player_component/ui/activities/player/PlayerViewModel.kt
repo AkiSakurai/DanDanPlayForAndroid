@@ -77,7 +77,7 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    fun bindSource(sourcePath: String, videoPath: String, isSubtitle: Boolean) {
+    fun bindSource(sourcePath: String, episodeId: Int, videoPath: String, isSubtitle: Boolean) {
         viewModelScope.launch {
             if (isSubtitle) {
                 DatabaseManager.instance.getVideoDao().updateSubtitle(
@@ -85,7 +85,7 @@ class PlayerViewModel @Inject constructor(
                 )
             } else {
                 DatabaseManager.instance.getVideoDao().updateDanmu(
-                    videoPath, sourcePath
+                    videoPath, sourcePath, episodeId
                 )
             }
         }

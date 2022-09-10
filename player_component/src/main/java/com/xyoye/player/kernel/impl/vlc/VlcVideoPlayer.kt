@@ -24,7 +24,6 @@ import org.videolan.libvlc.MediaPlayer
 import org.videolan.libvlc.interfaces.IMedia
 import org.videolan.libvlc.util.VLCVideoLayout
 import java.io.File
-import java.io.IOException
 import java.lang.Exception
 import kotlin.math.abs
 
@@ -63,12 +62,8 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
             return
         }
 
-        var videoUri = when {
-            path.startsWith("/") ||
-                    path.startsWith("file:") -> Uri.fromFile(File(path))
-            else -> Uri.parse(path)
-        }
 
+        var videoUri = Uri.parse(path)
         //VLC播放器通过代理服务实现请求头设置
         if (headers?.isNotEmpty() == true) {
             val proxyServer = VlcProxyServer.getInstance()

@@ -293,8 +293,7 @@ class DanDanVideoPlayer(
 
     private fun startPrepare(): Boolean {
         return if (videoSource.getVideoUrl().isNotEmpty()) {
-            val cacheUrl = CacheManager.getCacheUrl(videoSource.getVideoUrl(), videoSource.getHttpHeader())
-            mVideoPlayer.setDataSource(cacheUrl)
+            mVideoPlayer.setDataSource(videoSource.getVideoUrl(), videoSource.getHttpHeader())
             mVideoPlayer.prepareAsync()
             setPlayState(PlayState.STATE_PREPARING)
             true
