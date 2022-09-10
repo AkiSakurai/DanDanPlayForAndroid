@@ -3,11 +3,8 @@ package com.xyoye.stream_component.ui.activities.web_dav_file
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.config.AppConfig
-import com.xyoye.common_component.config.DanmuConfig
-import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.network.RetrofitModule
+import com.xyoye.common_component.extension.filterHideFile
 import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.media.WebDavMediaSource
@@ -36,7 +33,6 @@ class WebDavFileViewModel @Inject constructor(
         private const val PATH_ROOT = "/"
     }
 
-    private val showHiddenFile = AppConfig.isShowHiddenFile()
     private lateinit var addressUrl: String
     private lateinit var credentials: String
     private var rootPath = PATH_ROOT
@@ -79,15 +75,7 @@ class WebDavFileViewModel @Inject constructor(
                     isDirectory = { it.isDirectory }
                 ))
 
-                if (showHiddenFile) {
-                    fileLiveData.postValue(fileList)
-                } else {
-                    fileLiveData.postValue(fileList.filter {
-                        //过滤以.开头的文件
-                        !it.name.startsWith(".")
-                    }.toMutableList())
-                }
-
+                fileLiveData.postValue(fileList.filterHideFile { it.name })
                 //获取路径列表
                 pathLiveData.postValue(splitPath(path))
             } catch (t: Throwable) {

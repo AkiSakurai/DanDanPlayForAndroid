@@ -42,7 +42,6 @@ class SwitchSourceView(
     private val mHideTranslateX = -dp2px(300).toFloat()
 
     private val mRootPath = Environment.getExternalStorageDirectory().absolutePath
-    private val showHiddenFile = AppConfig.isShowHiddenFile()
     private var currentDirPath = mRootPath
     private var isSwitchSubtitle = false
     private var bindSourceObserver: ((sourcePath: String, isSubtitle: Boolean) -> Unit)? = null
@@ -318,14 +317,9 @@ class SwitchSourceView(
     }
 
     private fun setFileData(fileList: MutableList<FileManagerBean>) {
-        if (showHiddenFile) {
-            viewBinding.fileRv.setData(fileList)
-        } else {
-            viewBinding.fileRv.setData(fileList.filter {
-                //过滤以.开头的文件
-                !it.fileName.startsWith(".")
-            }.toMutableList())
-        }
+        viewBinding.fileRv.setData(
+            fileList.filterHideFile { it.fileName }
+        )
     }
 
     private fun selectSourceFile(data: FileManagerBean) {
