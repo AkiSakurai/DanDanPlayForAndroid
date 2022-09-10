@@ -22,11 +22,8 @@ class RenderTextureView(context: Context) : TextureView(context), InterSurfaceVi
     private lateinit var mVideoPlayer: AbstractVideoPlayer
 
     private val listener = object : SurfaceTextureListener {
-        override fun onSurfaceTextureSizeChanged(
-            surface: SurfaceTexture,
-            width: Int,
-            height: Int
-        ) {
+
+        override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
         }
 
         override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
@@ -34,14 +31,10 @@ class RenderTextureView(context: Context) : TextureView(context), InterSurfaceVi
         override fun onSurfaceTextureDestroyed(surface: SurfaceTexture) = false
 
         override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
-            if (mSurfaceTexture != null) {
-               setSurfaceTexture(mSurfaceTexture!!)
-            } else {
-                mSurfaceTexture = surfaceTexture
-                mSurface = Surface(surfaceTexture)
-                if (this@RenderTextureView::mVideoPlayer.isInitialized) {
-                    mVideoPlayer.setSurface(mSurface!!)
-                }
+            mSurfaceTexture = surface
+            mSurface = Surface(surface)
+            if (this@RenderTextureView::mVideoPlayer.isInitialized) {
+                mVideoPlayer.setSurface(mSurface!!)
             }
         }
     }
