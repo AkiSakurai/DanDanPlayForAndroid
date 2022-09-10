@@ -154,6 +154,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 curVideoSource.setDanmuPath(danmuPath)
                 curVideoSource.setEpisodeId(it.episodeId)
                 viewModel.storeDanmuSourceChange(curVideoSource)
+            } else if (it.state == LoadDanmuState.NO_MATCH_REQUIRE) {
+                videoController.setDanmuPath(it.danmuPath!!)
             }
         }
     }
@@ -206,6 +208,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
         if (DanmuConfig.isAutoMatchDanmu() && videoSource!!.getMediaType() != MediaType.FTP_SERVER) {
             danmuViewModel.loadDanmu(videoSource!!)
+        } else {
+            videoController.setDanmuPath(videoSource!!.getDanmuPath())
         }
         updatePlayer(videoSource!!)
         afterInitPlayer()
@@ -223,7 +227,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             start()
         }
 
-        videoController.setDanmuPath(source.getDanmuPath())
         // TODO: 2021/11/16 逻辑有问题，应该在Player实例化之前就可以执行
         videoController.setSubtitlePath(source.getSubtitlePath())
         //当弹幕绑定更新，保存变更
