@@ -158,6 +158,22 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 videoController.setDanmuPath(it.danmuPath!!)
             }
         }
+
+        danmuViewModel.downloadDanmuLiveData.observe(this) {
+            if (it == null){
+                videoController.showMessage("下载弹幕失败")
+                return@observe
+            }
+
+            val curVideoSource = dataBinding.danDanPlayer.getVideoSource()
+            videoController.setDanmuPath(it.first)
+
+            curVideoSource.setDanmuPath(it.first)
+            curVideoSource.setEpisodeId(it.second)
+            viewModel.storeDanmuSourceChange(curVideoSource)
+
+            videoController.showMessage("加载弹幕成功")
+        }
     }
 
     private fun initPlayer() {
@@ -192,6 +208,12 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 add = { keyword, isRegex -> viewModel.addDanmuBlock(keyword, isRegex) },
                 remove = { id -> viewModel.removeDanmuBlock(id) },
                 queryAll = { viewModel.localDanmuBlockLiveData }
+            )
+            //弹幕搜索
+            observerDanmuSearch(
+                search = { danmuViewModel.searchDanmu(it) },
+                download = { danmuViewModel.downloadDanmu(it) },
+                searchResult = { danmuViewModel.danmuSearchLiveData }
             )
         }
     }

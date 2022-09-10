@@ -7,9 +7,15 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.utils.DanmuUtilsModule
 import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.common_component.config.DanmuConfig
+import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.utils.FileComparator
+
 import com.xyoye.common_component.utils.FileHashUtils
 import com.xyoye.common_component.utils.IOUtils
+import com.xyoye.data_component.bean.DanmuSourceContentBean
 import com.xyoye.data_component.bean.LoadDanmuBean
+import com.xyoye.data_component.data.DanmuAnimeData
 import com.xyoye.data_component.enums.LoadDanmuState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +32,8 @@ class PlayerDanmuViewModel @Inject constructor(
      val DanmuUtils: DanmuUtilsModule,
 ) : BaseViewModel() {
     val loadDanmuLiveData = MutableLiveData<LoadDanmuBean>()
+    val danmuSearchLiveData = MutableLiveData<List<DanmuSourceContentBean>>()
+    val downloadDanmuLiveData = MutableLiveData<Pair<String, Int>?>()
 
     fun loadDanmu(videoSource: BaseVideoSource) {
         val loadResult = LoadDanmuBean(videoSource.getVideoUrl())
@@ -33,7 +41,7 @@ class PlayerDanmuViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             //如果弹幕内容不为空，则无需匹配弹幕
-            if (DanmuUtils.isDanmuContentEmpty(historyDanmuPath).not()){
+            if (DanmuUtils.isDanmuContentEmpty(historyDanmuPath).not()) {
                 loadResult.state = LoadDanmuState.NO_MATCH_REQUIRE
                 loadResult.danmuPath = historyDanmuPath
                 loadResult.episodeId = videoSource.getEpisodeId()
@@ -97,7 +105,7 @@ class PlayerDanmuViewModel @Inject constructor(
         val response = Retrofit.extService.downloadResource(videoSource.getVideoUrl(), headers)
         val hash = FileHashUtils.getHash(response.byteStream())
 
-        if (hash.isNullOrEmpty()){
+        if (hash.isNullOrEmpty()) {
             loadResult.state = LoadDanmuState.NOT_SUPPORTED
             loadDanmuLiveData.postValue(loadResult)
             return
@@ -116,5 +124,77 @@ class PlayerDanmuViewModel @Inject constructor(
         loadResult.danmuPath = danmuInfo.first
         loadResult.episodeId = danmuInfo.second
         loadDanmuLiveData.postValue(loadResult)
+    }
+
+    fun searchDanmu(searchText: String) {
+        if (searchText.isEmpty())
+            return
+
+        httpRequest<List<DanmuSourceContentBean>>(viewModelScope) {
+
+            api {
+                val searchResult = Retrofit.service.searchDanmu(searchText, "")
+                val animeData = searchResult.animes ?: mutableListOf()
+
+                mapDanmuSourceData(animeData)
+            }
+
+            onSuccess {
+                danmuSearchLiveData.postValue(it)
+            }
+        }
+    }
+
+    private fun mapDanmuSourceData(animeData: MutableList<DanmuAnimeData>): List<DanmuSourceContentBean> {
+        val danmuData = mutableListOf<DanmuSourceContentBean>()
+
+        animeData.sortedWith(FileComparator(
+            value = { it.animeTitle ?: "" },
+            isDirectory = { false }
+        )).forEach { anime ->
+            val animeName = anime.animeTitle ?: return@forEach
+            val episodes = anime.episodes ?: return@forEach
+
+            val contentData = episodes.map {
+                DanmuSourceContentBean(animeName, it.episodeTitle, it.episodeId)
+            }
+            danmuData.addAll(contentData)
+        }
+
+        return danmuData
+    }
+
+    fun downloadDanmu(contentBean: DanmuSourceContentBean) {
+        httpRequest<Pair<String, Int>?>(viewModelScope) {
+            onStart { showLoading() }
+
+            api {
+                val language = DanmuConfig.getDefaultLanguage()
+                val danmuData = Retrofit.service.getDanmuContent(
+                    contentBean.episodeId.toString(),
+                    true,
+                    language
+                )
+                val danmuFileName = contentBean.animeTitle + "_" + contentBean.episodeTitle + ".xml"
+                val danmuPath = DanmuUtils.saveDanmu(danmuData, null, danmuFileName)
+
+
+                if (danmuPath.isNullOrEmpty()) {
+                    null
+                } else {
+                    Pair(danmuPath, contentBean.episodeId)
+                }
+            }
+
+            onSuccess {
+                downloadDanmuLiveData.postValue(it)
+            }
+
+            onError {
+                downloadDanmuLiveData.postValue(null)
+            }
+
+            onComplete { hideLoading() }
+        }
     }
 }
