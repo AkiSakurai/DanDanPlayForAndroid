@@ -86,6 +86,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
             return@setOnNavigationItemSelectedListener true
         }
 
+        viewModel.initDatabase()
         viewModel.initCloudBlockData()
 
         if (UserConfig.isUserLoggedIn()) {
