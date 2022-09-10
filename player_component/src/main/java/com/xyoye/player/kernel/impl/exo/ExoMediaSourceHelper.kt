@@ -95,7 +95,7 @@ object ExoMediaSourceHelper {
 
     private fun newCache(): Cache {
         return SimpleCache(
-            PathHelper.getExoCacheDirectory(),
+            PathHelper.getPlayCacheDirectory(),
             LeastRecentlyUsedCacheEvictor(512L * 1024 * 1024),
             StandaloneDatabaseProvider(BaseApplication.getAppContext())
         )

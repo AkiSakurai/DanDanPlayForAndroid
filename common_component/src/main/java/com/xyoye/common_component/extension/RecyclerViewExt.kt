@@ -36,7 +36,7 @@ fun RecyclerView.gridEmpty(spanCount: Int): GridLayoutManager {
     }
 }
 
-fun <T: Any> RecyclerView.setData(items: MutableList<T>) {
+fun <T: Any> RecyclerView.setData(items: List<T>) {
     adapter?.apply {
         if (this is BaseAdapter<*>) {
             (this as BaseAdapter<T>).setData(items)
