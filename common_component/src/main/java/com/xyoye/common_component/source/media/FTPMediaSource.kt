@@ -4,6 +4,7 @@ import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.DanmuUtilsModule
+import com.xyoye.common_component.source.factory.FTPSourceFactory
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.enums.MediaType
 import org.apache.commons.net.ftp.FTPFile
@@ -90,7 +91,7 @@ class FTPMediaSource(
     }
 
     override fun getUniqueKey(): String {
-        return rootPath + "/" + getVideoTitle()
+        return FTPSourceFactory.generateUniqueKey(rootPath, videoSources[index])
     }
 
 }

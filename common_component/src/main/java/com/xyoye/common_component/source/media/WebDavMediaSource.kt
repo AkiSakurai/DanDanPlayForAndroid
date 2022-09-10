@@ -3,9 +3,8 @@ package com.xyoye.common_component.source.media
 import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.base.VideoSourceFactory
-import com.xyoye.common_component.source.helper.SourceHelper
 import com.xyoye.common_component.utils.DanmuUtilsModule
-
+import com.xyoye.common_component.source.factory.WebDavSourceFactory
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.sardine.DavResource
@@ -79,8 +78,7 @@ class WebDavMediaSource(
     }
 
     override fun getUniqueKey(): String {
-        val url = getVideoUrl()
-        return "webdav:/${SourceHelper.getHttpUniqueKey(url)}"
+        return WebDavSourceFactory.generateUniqueKey(rootPath, videoSources[index])
     }
 
 

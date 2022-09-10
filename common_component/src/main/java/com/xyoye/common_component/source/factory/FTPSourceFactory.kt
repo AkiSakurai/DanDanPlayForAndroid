@@ -3,6 +3,7 @@ package com.xyoye.common_component.source.factory
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.extension.formatFileName
+import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.media.FTPMediaSource
 import com.xyoye.common_component.utils.*
@@ -48,6 +49,10 @@ object FTPSourceFactory {
             episodeId,
             subtitlePath
         )
+    }
+
+    fun generateUniqueKey(rootPath: String, ftpFile: FTPFile): String {
+        return (rootPath + "_" + ftpFile.name).toMd5String()
     }
 
     private fun fillPlaySource(rootPath: String, ftpFile: FTPFile): Boolean {
