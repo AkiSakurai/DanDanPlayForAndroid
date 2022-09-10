@@ -215,8 +215,6 @@ class SettingPlayerView(
             layoutManager = grid(5)
 
             adapter = buildAdapter {
-                initData(mVideoGravityData)
-
                 addItem<VideoGravityBean, ItemSettingVideoParamsBinding>(R.layout.item_setting_video_params) {
                     initView { data, position, _ ->
                         itemBinding.apply {
@@ -247,6 +245,7 @@ class SettingPlayerView(
                     }
                 }
             }
+            setData(mVideoGravityData)
         }
 
         viewBinding.audioTrackRv.apply {
