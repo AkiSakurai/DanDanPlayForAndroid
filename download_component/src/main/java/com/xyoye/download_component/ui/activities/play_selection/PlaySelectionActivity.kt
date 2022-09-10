@@ -75,7 +75,7 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
                 this@PlaySelectionActivity,
                 MediaType.WEBDAV_SERVER,
                 refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
-                openFile = { viewModel.playItem(it) },
+                openFile = { viewModel.playItem(it.uniqueKey ?: "") },
                 openDirectory = { }
             )
         }
