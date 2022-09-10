@@ -81,7 +81,8 @@ class PlaySelectionViewModel @Inject constructor(
                     history?.subtitlePath,
                     history?.videoPosition ?: 0,
                     history?.videoDuration ?: 0,
-                    uniqueKey
+                    uniqueKey,
+                    lastPlayTime = history?.playTime
                 )
                 displayFiles.add(fileBean)
             }
