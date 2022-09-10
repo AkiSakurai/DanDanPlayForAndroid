@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
-import com.xyoye.common_component.extension.filterHideFile
+import com.xyoye.common_component.extension.filterHiddenFile
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.*
@@ -29,7 +29,7 @@ class FTPFileViewModel @Inject constructor(
 
     private val showHiddenFile = AppConfig.isShowHiddenFile()
 
-    val fileLiveData = MutableLiveData<MutableList<FTPFile>>()
+    val fileLiveData = MutableLiveData<List<FTPFile>>()
     val pathLiveData = MutableLiveData<MutableList<FilePathBean>>()
     val playLiveData = MutableLiveData<Any>()
 
@@ -201,7 +201,7 @@ class FTPFileViewModel @Inject constructor(
                     isDirectory = { it.isDirectory }
                 ))
 
-                fileLiveData.postValue(fileList.filterHideFile { it.name })
+                fileLiveData.postValue(fileList.filterHiddenFile { it.name })
                 hideLoading()
             } catch (e: FTPException) {
                 fileLiveData.postValue(mutableListOf())
