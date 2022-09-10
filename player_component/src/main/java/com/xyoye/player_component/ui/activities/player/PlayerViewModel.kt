@@ -67,7 +67,9 @@ class PlayerViewModel @Inject constructor(
                 sourceSubtitlePath,
                 torrentPath,
                 torrentIndex,
-                JsonHelper.toJson(source.getHttpHeader())
+                JsonHelper.toJson(source.getHttpHeader()),
+                null,
+                source.getUniqueKey()
             )
 
             DatabaseManager.instance.getPlayHistoryDao()

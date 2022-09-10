@@ -83,6 +83,10 @@ class LocalMediaSource private constructor(
         return null
     }
 
+    override fun getUniqueKey(): String {
+        return getVideoUrl()
+    }
+
     override fun getMediaType(): MediaType {
         return MediaType.LOCAL_STORAGE
     }
