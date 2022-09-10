@@ -78,6 +78,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
         registerReceiver()
 
+        initPlayer()
+
         initListener()
 
         initPlayerConfig()
@@ -136,26 +138,13 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     }
 
-    private fun applyPlaySource(newSource: VideoSource?) {
-        dataBinding.danDanPlayer.pause()
-        dataBinding.danDanPlayer.release()
-
-        videoSource = newSource
-        if (checkPlayParams(videoSource).not()) {
-            return
-        }
-        initPlayer(videoSource!!)
-        afterInitPlayer()
-    }
-
-    private fun initPlayer(source: VideoSource) {
+    private fun initPlayer() {
         videoController = VideoController(this)
         dataBinding.danDanPlayer.setController(videoController)
 
         videoController.apply {
-            setVideoTitle(source.getVideoTitle())
-            setLastPosition(source.getCurrentPosition())
             setBatteryHelper(batteryHelper)
+
             //播放错误
             observerPlayError {
                 showPlayErrorDialog()
@@ -181,6 +170,27 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 remove = { id -> viewModel.removeDanmuBlock(id) },
                 queryAll = { viewModel.localDanmuBlockLiveData }
             )
+        }
+    }
+
+    private fun applyPlaySource(newSource: VideoSource?) {
+        dataBinding.danDanPlayer.pause()
+        dataBinding.danDanPlayer.release()
+        videoController.release()
+
+        videoSource = newSource
+        if (checkPlayParams(videoSource).not()) {
+            return
+        }
+        updatePlayer(videoSource!!)
+        afterInitPlayer()
+    }
+
+    private fun updatePlayer(source: VideoSource) {
+
+        videoController.apply {
+            setVideoTitle(source.getVideoTitle())
+            setLastPosition(source.getCurrentPosition())
         }
 
         dataBinding.danDanPlayer.apply {

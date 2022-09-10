@@ -169,4 +169,10 @@ class SubtitleTextView(
         val offsetTime = PlayerInitializer.Subtitle.offsetPosition
         mSubtitleManager.setOffset(offsetTime)
     }
+
+    fun release() {
+        mUrl = null
+        mInnerSubtitleEnable = false
+        mExternalSubtitleEnable = false
+    }
 }
