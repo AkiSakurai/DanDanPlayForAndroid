@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
@@ -18,16 +18,22 @@ import com.xyoye.data_component.data.DanmuMatchData
 import com.xyoye.data_component.data.DanmuRelatedData
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import javax.inject.Inject
 
 
 /**
  * Created by xyoye on 2022/1/25
  */
-class BindDanmuSourceFragmentViewModel : BaseViewModel() {
+@HiltViewModel
+class BindDanmuSourceFragmentViewModel @Inject constructor(
+    val DanmuUtils : DanmuUtilsModule,
+    val Retrofit: RetrofitModule
+): BaseViewModel() {
 
     lateinit var uniqueKey: String
     lateinit var mediaType: MediaType
