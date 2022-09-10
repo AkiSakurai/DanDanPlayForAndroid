@@ -7,6 +7,7 @@ import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.source.inter.ExtraSource
 import com.xyoye.common_component.source.inter.VideoSource
+import com.xyoye.common_component.source.media.TorrentMediaSource
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.DanmuUtilsModule
 import com.xyoye.common_component.utils.JsonHelper
@@ -37,7 +38,7 @@ class PlayerViewModel @Inject constructor(
         source ?: return
 
         GlobalScope.launch(context = Dispatchers.IO) {
-            var sourceDanmuPath : String? = null
+            var sourceDanmuPath: String? = null
             var sourceEpisodeId = 0
             var sourceSubtitlePath: String? = null
             if (source is ExtraSource) {
@@ -45,6 +46,14 @@ class PlayerViewModel @Inject constructor(
                 sourceEpisodeId = source.getEpisodeId()
                 sourceSubtitlePath = source.getSubtitlePath()
             }
+
+            var torrentPath: String? = null
+            var torrentIndex = -1
+            if (source is TorrentMediaSource) {
+                torrentPath = source.getTorrentPath()
+                torrentIndex = source.getTorrentIndex()
+            }
+
             val history = PlayHistoryEntity(
                 0,
                 source.getVideoTitle(),
@@ -56,6 +65,8 @@ class PlayerViewModel @Inject constructor(
                 sourceDanmuPath,
                 sourceEpisodeId,
                 sourceSubtitlePath,
+                torrentPath,
+                torrentIndex,
                 JsonHelper.toJson(source.getHttpHeader())
             )
 
