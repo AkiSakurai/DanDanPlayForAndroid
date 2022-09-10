@@ -13,7 +13,7 @@ import com.xyoye.common_component.source.factory.WebDavSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
-import com.xyoye.data_component.bean.WebDavFileBean
+import com.xyoye.data_component.bean.StorageFileBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.sardine.DavResource
@@ -44,7 +44,7 @@ class WebDavFileViewModel @Inject constructor(
 
     private val curDirectoryFiles = mutableListOf<DavResource>()
 
-    val fileLiveData = MutableLiveData<List<Any>>()
+    val fileLiveData = MutableLiveData<List<StorageFileBean>>()
     val pathLiveData = MutableLiveData<List<FilePathBean>>()
     val playLiveData = MutableLiveData<Any>()
 
@@ -101,14 +101,16 @@ class WebDavFileViewModel @Inject constructor(
                 .filter { it.isDirectory || isVideoFile(it.name) }
                 .map {
                     if (it.isDirectory) {
-                        return@map it
+                        return@map StorageFileBean(true, it.path, it.name ?: it.displayName)
                     }
+
                     val uniqueKey = WebDavSourceFactory.generateUniqueKey(addressUrl, it)
                     val history = DatabaseManager.instance
                         .getPlayHistoryDao()
                         .getHistoryByKey(uniqueKey, MediaType.WEBDAV_SERVER)
-                    WebDavFileBean(
-                        it.href,
+                    StorageFileBean(
+                        false,
+                        it.path,
                         it.name ?: it.displayName,
                         history?.danmuPath,
                         history?.subtitlePath,
@@ -135,10 +137,12 @@ class WebDavFileViewModel @Inject constructor(
         return true
     }
 
-    fun playItem(href: URI) {
+    fun playItem(uniqueKey: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val videoSources = curDirectoryFiles.filter { isVideoFile(it.name) }
-            val index = videoSources.indexOfFirst { it.href == href }
+            val index = videoSources.indexOfFirst {
+                WebDavSourceFactory.generateUniqueKey(addressUrl, it) == uniqueKey
+            }
             if (videoSources.isNullOrEmpty() || index < 0) {
                 ToastCenter.showError("播放失败，不支持播放的资源")
                 return@launch

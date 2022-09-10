@@ -4,15 +4,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
+import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.filterHiddenFile
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.source.factory.FTPSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.ftp.FTPException
 import com.xyoye.common_component.utils.ftp.FTPManager
 import com.xyoye.common_component.utils.server.FTPPlayServer
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
+import com.xyoye.data_component.bean.StorageFileBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.xyoye.data_component.enums.MediaType
@@ -29,11 +32,12 @@ class FTPFileViewModel @Inject constructor(
 
     private val showHiddenFile = AppConfig.isShowHiddenFile()
 
-    val fileLiveData = MutableLiveData<List<FTPFile>>()
+    val fileLiveData = MutableLiveData<List<StorageFileBean>>()
     val pathLiveData = MutableLiveData<MutableList<FilePathBean>>()
     val playLiveData = MutableLiveData<Any>()
 
     private var openedDirectoryList = mutableListOf<String>()
+    private var curDirectoryFiles = mutableListOf<FTPFile>()
 
     /**
      * 初始化FTP，展开根目录
@@ -107,6 +111,33 @@ class FTPFileViewModel @Inject constructor(
         listDirectory(dirPath)
     }
 
+    fun refreshDirectoryWithHistory() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val ftpFiles = curDirectoryFiles
+                .filter { it.isDirectory || isVideoFile(it.name) }
+                .map {
+                    if (it.isDirectory) {
+                        return@map StorageFileBean(true, it.name, it.name)
+                    }
+                    val uniqueKey = FTPSourceFactory.generateUniqueKey(getOpenedDirPath(), it)
+                    val history = DatabaseManager.instance
+                        .getPlayHistoryDao()
+                        .getHistoryByKey(uniqueKey, MediaType.FTP_SERVER)
+                    StorageFileBean(
+                        true,
+                        it.name,
+                        it.name,
+                        history?.danmuPath,
+                        history?.subtitlePath,
+                        history?.videoPosition ?: 0L,
+                        history?.videoDuration ?: 0L,
+                        uniqueKey
+                    )
+                }
+            fileLiveData.postValue(ftpFiles)
+        }
+    }
+
     /**
      * 打开父目录
      */
@@ -131,7 +162,7 @@ class FTPFileViewModel @Inject constructor(
     /**
      * 打开视频文件
      */
-    fun openVideoFile(ftpFile: FTPFile) {
+    fun openVideoFile(uniqueKey: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val playServer = FTPPlayServer.getInstance()
@@ -141,19 +172,19 @@ class FTPFileViewModel @Inject constructor(
                 return@launch
             }
 
-            val videoSources = fileLiveData.value
-                ?.filter { isVideoFile(it.name) }
-            val index = videoSources?.indexOf(ftpFile)
-                ?: -1
+            val videoSources = curDirectoryFiles.filter { isVideoFile(it.name) }
+            val index = videoSources.indexOfFirst {
+                FTPSourceFactory.generateUniqueKey(getOpenedDirPath(), it) == uniqueKey
+            }
             if (videoSources.isNullOrEmpty() || index < 0) {
                 ToastCenter.showError("播放失败，不支持播放的资源")
                 return@launch
             }
 
             //同文件夹内的弹幕和字幕资源
-            val extSources = fileLiveData.value
-                ?.filter { isDanmuFile(it.name) || isSubtitleFile(it.name) }
-                ?: emptyList()
+            val extSources = curDirectoryFiles.filter {
+                isDanmuFile(it.name) || isSubtitleFile(it.name)
+            }
 
             showLoading()
 
@@ -195,13 +226,16 @@ class FTPFileViewModel @Inject constructor(
     private fun listDirectory(path: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val fileList = FTPManager.getInstance().listFiles(path)
-                fileList.sortWith(FileComparator(
-                    value = { it.name },
-                    isDirectory = { it.isDirectory }
-                ))
+                val childFiles = FTPManager.getInstance().listFiles(path)
+                    .filterHiddenFile { it.name }
+                    .sortedWith(FileComparator(
+                        value = { it.name },
+                        isDirectory = { it.isDirectory }
+                    ))
+                curDirectoryFiles.clear()
+                curDirectoryFiles.addAll(childFiles)
 
-                fileLiveData.postValue(fileList.filterHiddenFile { it.name })
+                refreshDirectoryWithHistory()
                 hideLoading()
             } catch (e: FTPException) {
                 fileLiveData.postValue(mutableListOf())
