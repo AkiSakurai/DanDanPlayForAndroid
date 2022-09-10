@@ -1,10 +1,9 @@
 package com.xyoye.common_component.source.media
 
-import com.xyoye.common_component.config.DanmuConfig
-import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.source.MediaSource
 import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.source.helper.LocalMediaSourceHelper
+import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.MediaType
 
@@ -15,81 +14,36 @@ import com.xyoye.data_component.enums.MediaType
 class LocalMediaSource private constructor(
     private val DanmuUtils: DanmuUtilsModule,
     private val index: Int,
-    private val playGroup: List<VideoEntity>,
+    private val videoSources: List<VideoEntity>,
     private val currentPosition: Long,
-    private val danmuPath: String?,
-    private val episodeId: Int,
-    private val subtitlePath: String?
-) : MediaSource(index, playGroup) {
+    private var danmuPath: String?,
+    private var episodeId: Int,
+    private var subtitlePath: String?
+) : MediaSource(index, videoSources) {
 
     companion object {
 
-        suspend fun build(DanmuUtils: DanmuUtilsModule, index: Int, playGroup: List<VideoEntity>?): LocalMediaSource? {
-            val video = playGroup?.getOrNull(index) ?: return null
 
-            val position = getHistoryPosition(video)
-            val (episodeId, danmuPath) = if (video.danmuPath != null) {
-                Pair(video.danmuId, video.danmuPath)
-            } else {
-                getVideoDanmu(DanmuUtils, video)
-            }
-            val subtitlePath = video.subtitlePath ?: getVideoSubtitle(DanmuUtils, video)
+        suspend fun build(DanmuUtils: DanmuUtilsModule, index: Int, videoSources: List<VideoEntity>?): LocalMediaSource? {
+            val video = videoSources?.getOrNull(index) ?: return null
+
+            val (episodeId, danmuPath) = LocalMediaSourceHelper.getVideoDanmu(DanmuUtils, video)
+            val subtitlePath = LocalMediaSourceHelper.getVideoSubtitle(DanmuUtils, video)
+            val position = LocalMediaSourceHelper.getHistoryPosition(DanmuUtils, video)
             return LocalMediaSource(
                 DanmuUtils,
                 index,
-                playGroup,
+                videoSources,
                 position,
                 danmuPath,
                 episodeId,
                 subtitlePath
             )
         }
-
-        private suspend fun getHistoryPosition(video: VideoEntity): Long {
-            return DatabaseManager.instance
-                .getPlayHistoryDao()
-                .getPlayHistoryPosition(video.filePath, MediaType.LOCAL_STORAGE)
-                ?: 0L
-        }
-
-        private suspend fun getVideoDanmu(DanmuUtils: DanmuUtilsModule, video: VideoEntity): Pair<Int, String?> {
-            //从本地找同名弹幕
-            if (DanmuConfig.isAutoLoadLocalDanmu()) {
-                DanmuUtils.findLocalDanmuByVideo(video.filePath)?.let {
-                    return Pair(0, it)
-                }
-            }
-            //自动加载网络弹幕
-            if (DanmuConfig.isAutoLoadNetworkDanmu()) {
-                val fileHash = IOUtils.getFileHash(video.filePath)
-                if (!fileHash.isNullOrEmpty()) {
-                    DanmuUtils.matchDanmuSilence(video.filePath, fileHash)?.let {
-                        return Pair(it.second, it.first)
-                    }
-                }
-            }
-            return Pair(0, null)
-        }
-
-        private suspend fun getVideoSubtitle(DanmuUtils: DanmuUtilsModule, video: VideoEntity): String? {
-            //自动加载本地同名字幕
-            if (SubtitleConfig.isAutoLoadLocalSubtitle()) {
-                SubtitleUtils.findLocalSubtitleByVideo(video.filePath)?.let {
-                    return it
-                }
-            }
-            //自动加载网络字幕
-            if (SubtitleConfig.isAutoLoadNetworkSubtitle()) {
-                SubtitleUtils.matchSubtitleSilence(DanmuUtils.Retrofit, video.filePath)?.let {
-                    return it
-                }
-            }
-            return null
-        }
     }
 
     override fun getVideoUrl(): String {
-        return playGroup[index].filePath
+        return videoSources[index].filePath
     }
 
     override fun getVideoTitle(): String {
@@ -105,7 +59,8 @@ class LocalMediaSource private constructor(
     }
 
     override fun setDanmuPath(path: String) {
-        playGroup[index].danmuPath = path
+        danmuPath = path
+        videoSources[index].danmuPath = path
     }
 
     override fun getEpisodeId(): Int {
@@ -113,7 +68,8 @@ class LocalMediaSource private constructor(
     }
 
     override fun setEpisodeId(id: Int) {
-        playGroup[index].danmuId = id
+        episodeId = id
+        videoSources[index].danmuId = id
     }
 
     override fun getSubtitlePath(): String? {
@@ -121,7 +77,8 @@ class LocalMediaSource private constructor(
     }
 
     override fun setSubtitlePath(path: String) {
-        playGroup[index].subtitlePath = path
+        subtitlePath = path
+        videoSources[index].subtitlePath = path
     }
 
     override fun getHttpHeader(): Map<String, String>? {
@@ -133,14 +90,14 @@ class LocalMediaSource private constructor(
     }
 
     override fun indexTitle(index: Int): String {
-        return playGroup.getOrNull(index)?.filePath?.run {
-            getFileName(this)
+        return videoSources.getOrNull(index)?.filePath?.let {
+            getFileName(it)
         } ?: ""
     }
 
     override suspend fun indexSource(index: Int): MediaSource? {
-        if (index in playGroup.indices)
-            return build(DanmuUtils, index, playGroup)
+        if (index in videoSources.indices)
+            return build(DanmuUtils, index, videoSources)
         return null
     }
 }
