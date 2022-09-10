@@ -3,7 +3,6 @@ package com.xyoye.user_component.ui.fragment.scan_filter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseFragment
-import com.xyoye.common_component.extension.setAutoSizeText
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.extension.vertical
@@ -39,7 +38,7 @@ class ScanFilterFragment : BaseFragment<ScanFilterFragmentViewModel, FragmentSca
                         itemBinding.apply {
                             val fileCountText = "${data.fileCount}视频"
 
-                            folderTv.setAutoSizeText(getFolderName(data.folderPath))
+                            folderTv.text = getFolderName(data.folderPath)
                             fileCountTv.text = fileCountText
 
                             folderIv.setImageResource(if (data.isFilter) R.drawable.ic_folder_filter else R.drawable.ic_folder)
