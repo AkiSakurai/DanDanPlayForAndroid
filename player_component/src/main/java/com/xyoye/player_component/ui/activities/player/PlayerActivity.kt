@@ -228,12 +228,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         if (checkPlayParams(videoSource).not()) {
             return
         }
-        if (DanmuConfig.isAutoMatchDanmu() && videoSource!!.getMediaType() != MediaType.FTP_SERVER) {
-            danmuViewModel.loadDanmu(videoSource!!)
-        } else {
-            videoController.setDanmuPath(videoSource!!.getDanmuPath())
-        }
+
         updatePlayer(videoSource!!)
+
         afterInitPlayer()
     }
 
@@ -280,6 +277,13 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             File(videoSource!!.getVideoUrl()).parentFile?.absolutePath?.let {
                 PlayerInitializer.selectSourceDirectory = it
             }
+        }
+
+        //自动匹配弹幕
+        if (DanmuConfig.isAutoMatchDanmu() && videoSource!!.getMediaType() != MediaType.FTP_SERVER) {
+            danmuViewModel.loadDanmu(videoSource!!)
+        } else {
+            videoController.setDanmuPath(videoSource!!.getDanmuPath())
         }
     }
 
