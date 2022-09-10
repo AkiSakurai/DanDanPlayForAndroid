@@ -281,7 +281,7 @@ class FTPFileViewModel @Inject constructor(
             FTPManager.getInstance().disconnect()
             if (!fileHash.isNullOrEmpty()) {
                 //根据hash匹配弹幕
-                DanmuUtils.matchDanmuSilence(viewModelScope, fileName, fileHash)?.let {
+                DanmuUtils.matchDanmuSilence(fileName, fileHash)?.let {
                     playParams.danmuPath = it.first
                     playParams.episodeId = it.second
                     DDLog.i("ftp danmu -----> match download")

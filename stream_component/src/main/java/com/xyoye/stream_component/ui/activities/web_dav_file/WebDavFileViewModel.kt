@@ -305,7 +305,7 @@ class WebDavFileViewModel @Inject constructor(
             if (hash.isNullOrEmpty()) {
                 return@withContext null
             }
-            return@withContext DanmuUtils.matchDanmuSilence(viewModelScope, davResource.name, hash)
+            return@withContext DanmuUtils.matchDanmuSilence(davResource.name, hash)
         }
     }
 }

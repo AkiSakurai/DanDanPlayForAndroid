@@ -153,7 +153,7 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
 
                 addItem<Any, ItemMediaVideoBinding>(R.layout.item_media_video) {
                     checkType { data, _ -> data is VideoEntity }
-                    initView { data, _, _ ->
+                    initView { data, position, _ ->
                         data as VideoEntity
                         itemBinding.run {
                             titleTv.setTextColorRes(
@@ -170,7 +170,7 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
 
                             itemLayout.setOnClickListener {
                                 mSearchView?.clearFocus()
-                                viewModel.checkPlayParams(data)
+                                viewModel.playItem(position)
                             }
                             moreActionIv.setOnClickListener {
                                 mSearchView?.clearFocus()
@@ -228,6 +228,12 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
                 .withParcelable("playParams", it)
+                .navigation()
+        }
+
+        viewModel.playLiveData.observe(this) {
+            ARouter.getInstance()
+                .build(RouteTable.Player.Player)
                 .navigation()
         }
     }
