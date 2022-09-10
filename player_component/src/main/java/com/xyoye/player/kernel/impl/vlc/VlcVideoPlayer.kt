@@ -63,7 +63,11 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         }
 
 
-        var videoUri = Uri.parse(path)
+        var videoUri = if (path.startsWith("/") || path.startsWith("content://")) {
+            Uri.fromFile(File(path))
+        } else {
+            Uri.parse(path)
+        }
         //VLC播放器通过代理服务实现请求头设置
         if (headers?.isNotEmpty() == true) {
             val proxyServer = VlcProxyServer.getInstance()
