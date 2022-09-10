@@ -10,8 +10,10 @@ import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityWebDavLoginBinding
 import com.xyoye.stream_component.ui.dialog.WebDavLoginDialog
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Stream.WebDavLogin)
+@AndroidEntryPoint
 class WebDavLoginActivity : BaseActivity<WebDavLoginViewModel, ActivityWebDavLoginBinding>() {
 
     @Autowired

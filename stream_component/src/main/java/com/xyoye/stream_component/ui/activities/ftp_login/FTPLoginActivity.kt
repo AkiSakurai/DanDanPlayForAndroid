@@ -10,8 +10,10 @@ import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityFtpLoginBinding
 import com.xyoye.stream_component.ui.dialog.FTPLoginDialog
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Stream.FTPLogin)
+@AndroidEntryPoint
 class FTPLoginActivity : BaseActivity<FTPLoginViewModel, ActivityFtpLoginBinding>() {
 
     @Autowired

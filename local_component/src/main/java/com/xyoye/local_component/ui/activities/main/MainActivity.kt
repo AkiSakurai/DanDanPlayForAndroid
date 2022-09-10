@@ -4,11 +4,13 @@ import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Created by xyoye on 2020/7/29.
  */
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
     override fun initViewModel() =

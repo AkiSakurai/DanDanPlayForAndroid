@@ -20,12 +20,14 @@ import com.xyoye.data_component.data.RemoteScanData
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityRemoteScanBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
 
 @Route(path = RouteTable.Stream.RemoteScan)
+@AndroidEntryPoint
 class RemoteScanActivity : BaseActivity<RemoteScanViewModel, ActivityRemoteScanBinding>() {
 
     private lateinit var remoteView: RemoteView

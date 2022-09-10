@@ -13,7 +13,9 @@ import com.xyoye.player_component.BR
 import com.xyoye.player_component.ExtendPermissionGrantService
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ActivityPlayerIntentBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerIntentBinding>() {
 
     private lateinit var videoUri: Uri

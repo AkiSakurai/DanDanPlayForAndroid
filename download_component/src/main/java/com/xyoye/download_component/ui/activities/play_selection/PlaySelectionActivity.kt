@@ -10,8 +10,10 @@ import com.xyoye.download_component.R
 import com.xyoye.download_component.databinding.ActivityPlaySelectionBinding
 import com.xyoye.download_component.ui.dialog.PlaySelectionDialog
 import com.xyoye.download_component.utils.PlayTaskManager
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Download.PlaySelection)
+@AndroidEntryPoint
 class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlaySelectionBinding>() {
 
     @Autowired

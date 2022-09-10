@@ -10,8 +10,10 @@ import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivitySmbLoginBinding
 import com.xyoye.stream_component.ui.dialog.SmbLoginDialog
+import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouteTable.Stream.SmbLogin)
+@AndroidEntryPoint
 class SmbLoginActivity : BaseActivity<SmbLoginViewModel, ActivitySmbLoginBinding>() {
 
     @Autowired

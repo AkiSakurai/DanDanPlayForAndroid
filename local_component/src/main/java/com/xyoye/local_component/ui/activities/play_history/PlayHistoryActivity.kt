@@ -29,9 +29,11 @@ import com.xyoye.local_component.databinding.ItemPlayHistoryBinding
 import com.xyoye.local_component.ui.dialog.MagnetPlayDialog
 import com.xyoye.local_component.ui.dialog.StreamLinkDialog
 import com.xyoye.local_component.utils.MediaTypeUtil
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
 @Route(path = RouteTable.Local.PlayHistory)
+@AndroidEntryPoint
 class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHistoryBinding>() {
 
     @Autowired
