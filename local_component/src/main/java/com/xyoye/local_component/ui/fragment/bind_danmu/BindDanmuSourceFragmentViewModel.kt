@@ -211,13 +211,13 @@ class BindDanmuSourceFragmentViewModel @Inject constructor(
 
     fun unbindDanmu() {
         viewModelScope.launch(Dispatchers.IO) {
-            DatabaseManager.instance.getPlayHistoryDao()
-                .updateDanmu(uniqueKey, mediaType, null, 0)
-            sourceRefreshLiveData.postValue(Any())
+            databaseDanmu(null, 0)
+        }
+    }
 
-            history?.danmuPath = null
-            history?.episodeId = 0
-            selectTab(currentTab)
+    fun bindLocalDanmu(filePath: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            databaseDanmu(filePath, 0)
         }
     }
 
@@ -323,7 +323,7 @@ class BindDanmuSourceFragmentViewModel @Inject constructor(
     }
 
     private suspend fun databaseDanmu(
-        danmuPath: String,
+        danmuPath: String?,
         episodeId: Int
     ) {
         val history = DatabaseManager.instance.getPlayHistoryDao()

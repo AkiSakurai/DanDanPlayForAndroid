@@ -11,7 +11,7 @@ import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.RequestError
 import com.xyoye.common_component.network.request.RequestErrorHandler
-import com.xyoye.data_component.data.SubtitleSearchData
+import com.xyoye.data_component.data.SubtitleSourceBean
 import com.xyoye.data_component.data.SubtitleSubData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.flatMapLatest
@@ -21,10 +21,8 @@ import retrofit2.HttpException
  * Created by xyoye on 2021/3/25.
  */
 
-class SearchSubtitleRepository  constructor(
-    val Retrofit: RetrofitModule,
-    private val scope: CoroutineScope
-) {
+
+class SubtitleSearchHelper(val Retrofit: RetrofitModule, private val scope: CoroutineScope) {
 
     private val searchKeyLiveData = MutableLiveData<String>()
 
@@ -37,7 +35,7 @@ class SearchSubtitleRepository  constructor(
         searchKeyLiveData.postValue(keyword)
     }
 
-    private fun getPager(keyword: String): Pager<Int, SubtitleSearchData> {
+    private fun getPager(keyword: String): Pager<Int, SubtitleSourceBean> {
         return Pager(
             config = PagingConfig(15, 15),
             pagingSourceFactory = { SearchSubtitleSource(keyword) }
@@ -45,9 +43,9 @@ class SearchSubtitleRepository  constructor(
     }
 
     private inner class SearchSubtitleSource(private val keyword: String) :
-        PagingSource<Int, SubtitleSearchData>() {
+        PagingSource<Int, SubtitleSourceBean>() {
 
-        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SubtitleSearchData> {
+        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SubtitleSourceBean> {
             if (params is LoadParams.Prepend) {
                 return LoadResult.Page(
                     data = listOf(),
@@ -77,8 +75,8 @@ class SearchSubtitleRepository  constructor(
         /**
          * 搜索字幕转显示数据类型
          */
-        private fun sub2SubtitleSearchData(subData: SubtitleSubData?): MutableList<SubtitleSearchData> {
-            return mutableListOf<SubtitleSearchData>().apply {
+        private fun sub2SubtitleSearchData(subData: SubtitleSubData?): MutableList<SubtitleSourceBean> {
+            return mutableListOf<SubtitleSourceBean>().apply {
                 val subList = subData?.sub?.subs
                 if (subList?.size ?: 0 > 0) {
                     for (subDetailData in subList!!) {
@@ -88,7 +86,7 @@ class SearchSubtitleRepository  constructor(
                             else
                                 subDetailData.native_name
                         add(
-                            SubtitleSearchData(
+                            SubtitleSourceBean(
                                 subDetailData.id,
                                 subtitleName,
                                 subDetailData.upload_time,

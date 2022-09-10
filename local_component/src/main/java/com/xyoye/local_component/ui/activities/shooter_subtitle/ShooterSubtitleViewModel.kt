@@ -3,7 +3,6 @@ package com.xyoye.local_component.ui.activities.shooter_subtitle
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.network.RetrofitModule
@@ -12,17 +11,17 @@ import com.xyoye.common_component.utils.SubtitleUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.SubDetailData
 import com.xyoye.data_component.data.SubtitleSubData
-import com.xyoye.local_component.utils.SearchSubtitleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+import com.xyoye.local_component.utils.SubtitleSearchHelper
 
 @HiltViewModel
 class ShooterSubtitleViewModel @Inject constructor(
     val Retrofit: RetrofitModule
 ) : BaseViewModel() {
 
-    private val searchSubtitleRepository = SearchSubtitleRepository(Retrofit, viewModelScope)
+    private val searchSubtitleRepository = SubtitleSearchHelper(Retrofit, viewModelScope)
     val searchSubDetailLiveData = MutableLiveData<SubDetailData>()
 
     val searchSubtitleLiveData = searchSubtitleRepository.subtitleLiveData
@@ -89,15 +88,15 @@ class ShooterSubtitleViewModel @Inject constructor(
             onStart { showLoading() }
 
             api {
-                val responseBody = Retrofit.extService.downloadResource(url)
+//                val responseBody = Retrofit.extService.downloadResource(url)
                 //这里用回调处理不是很好，暂时没有更好方案
-                SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream()) {
-                    if (it.isNotEmpty()) {
-                        ToastCenter.showSuccess("字幕下载成功：$it", Toast.LENGTH_LONG)
-                    } else {
-                        ToastCenter.showError("解压字幕文件失败，请尝试手动解压")
-                    }
-                }
+//                SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream()) {
+//                    if (it.isNotEmpty()) {
+//                        ToastCenter.showSuccess("字幕下载成功：$it", Toast.LENGTH_LONG)
+//                    } else {
+//                        ToastCenter.showError("解压字幕文件失败，请尝试手动解压")
+//                    }
+//                }
             }
 
             onError { showNetworkError(it) }
