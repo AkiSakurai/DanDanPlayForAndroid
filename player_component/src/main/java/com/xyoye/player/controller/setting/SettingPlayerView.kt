@@ -147,7 +147,7 @@ class SettingPlayerView(
         viewBinding.playerTypeRc.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<PlayerType> {
+            adapter = buildAdapter {
                 addItem<PlayerType, ItemVideoTrackBinding>(R.layout.item_video_track) {
                     initView { data, position, _ ->
                         itemBinding.apply {
@@ -214,7 +214,7 @@ class SettingPlayerView(
         viewBinding.videoGravityRv.apply {
             layoutManager = grid(5)
 
-            adapter = buildAdapter<VideoGravityBean> {
+            adapter = buildAdapter {
                 initData(mVideoGravityData)
 
                 addItem<VideoGravityBean, ItemSettingVideoParamsBinding>(R.layout.item_setting_video_params) {
