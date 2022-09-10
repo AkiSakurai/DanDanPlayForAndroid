@@ -56,7 +56,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     private var videoSource: VideoSource? = null
 
     //电量管理
-    private var batteryHelper = BatteryHelper(this)
+    private var batteryHelper = BatteryHelper()
 
     override fun initViewModel() =
         ViewModelInit(
@@ -94,8 +94,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     override fun onDestroy() {
         beforePlayExit()
-        dataBinding.danDanPlayer.release()
         unregisterReceiver()
+        dataBinding.danDanPlayer.release()
+        batteryHelper.release()
         super.onDestroy()
     }
 
@@ -243,6 +244,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         headsetReceiver = HeadsetBroadcastReceiver(this)
         registerReceiver(screenLockReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF))
         registerReceiver(headsetReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
+        batteryHelper.registerReceiver(this)
     }
 
     private fun unregisterReceiver() {
@@ -252,6 +254,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         if (this::headsetReceiver.isInitialized) {
             unregisterReceiver(headsetReceiver)
         }
+        batteryHelper.unregisterReceiver(this)
     }
 
     private fun initPlayerConfig() {
