@@ -135,7 +135,7 @@ class SmbFileViewModel @Inject constructor(
                 val playServer = SMBPlayServer.getInstance()
                 if (!playServer.isAlive) playServer.start()
             } catch (e: Exception) {
-                ToastCenter.showError("启动Smb播放服务失败，请重试\n${e.message}")
+                ToastCenter.showError("启动SMB播放服务失败，请重试\n${e.message}")
                 return@launch
             }
 
