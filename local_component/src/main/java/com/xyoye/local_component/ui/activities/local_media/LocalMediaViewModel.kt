@@ -19,8 +19,6 @@ import com.xyoye.common_component.source.media.LocalMediaSource
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FolderBean
-import com.xyoye.data_component.bean.PlayParams
-import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.FileSortType
 import com.xyoye.data_component.enums.MediaType
@@ -56,7 +54,7 @@ class LocalMediaViewModel @Inject constructor(
 
     val sortLiveData = MutableLiveData<FileSortType>()
 
-    val playVideoLiveData = MutableLiveData<PlayParams>()
+
     val playLiveData = MutableLiveData<Any>()
 
     private var searchJob: Job? = null
@@ -67,43 +65,45 @@ class LocalMediaViewModel @Inject constructor(
     init {
         sortLiveData.value = FileSortType.valueOf(AppConfig.getLocalFileSortType())
     }
+    //记录最近一次本地播放的live data
+    val lastPlayHistory = DatabaseManager.instance.getPlayHistoryDao()
+        .gitLastPlayLiveData(MediaType.LOCAL_STORAGE)
 
     fun fastPlay() {
         viewModelScope.launch {
-            //查询并播放最后一次播放的视频
-            queryLastPlayHistory()?.also { entity ->
-                val playParams = PlayParams(
-                    entity.url,
-                    entity.videoName,
-                    entity.danmuPath,
-                    entity.subtitlePath,
-                    entity.videoPosition,
-                    entity.episodeId,
-                    entity.mediaType
-                )
-                playVideoLiveData.postValue(playParams)
+            val lastHistory = lastPlayHistory.value
+            if (lastHistory == null) {
+                ToastCenter.showError("无最近播放记录")
+                return@launch
             }
+
+            val (index, folderVideos) = getFolderVideos(lastHistory.url)
+                ?: return@launch
+
+            playIndexFromList(index, folderVideos)
         }
     }
 
-    fun listRoot() {
+    fun listRoot(deepRefresh: Boolean = false) {
         inRootFolder.set(true)
         inSearchState.set(false)
-        refreshEnableLiveData.postValue(true)
+
+        if (deepRefresh.not() && folderLiveData.value != null) {
+            backRoot(folderLiveData.value!!)
+            return
+        }
 
         viewModelScope.launch(Dispatchers.IO) {
+            refreshEnableLiveData.postValue(true)
+            //深度刷新所有视频数据
             val refreshSuccess = refreshSystemVideo()
             if (refreshSuccess) {
                 val folderData = DatabaseManager.instance.getVideoDao().getFolderByFilter()
 
-                //是否为最后一次播放的文件所在文件夹
-                queryLastPlayHistory()?.apply {
-                    folderData.find {
-                        it.folderPath == getDirPath(url)
-                    }?.isLastPlay = true
-                }
-
-                folderData.sortWith(FileComparator(
+                val lastPlayFolder = getLastPlayFolder()
+                folderData.onEach {
+                    it.isLastPlay = it.folderPath == lastPlayFolder
+                }.sortWith(FileComparator(
                     value = { getFolderName(it.folderPath) },
                     isDirectory = { true }
                 ))
@@ -114,6 +114,14 @@ class LocalMediaViewModel @Inject constructor(
                 refreshLiveData.postValue(false)
             }
         }
+    }
+
+    private fun backRoot(folderList: MutableList<FolderBean>) {
+        val lastPlayFolder = getLastPlayFolder()
+        folderList.forEach {
+            it.isLastPlay = it.folderPath == lastPlayFolder
+        }
+        folderLiveData.postValue(folderList)
     }
 
     fun listFolder(folderName: String, folderPath: String) {
@@ -127,15 +135,48 @@ class LocalMediaViewModel @Inject constructor(
             databaseVideoLiveData?.let {
                 fileLiveData.removeSource(it)
             }
-            databaseVideoLiveData = DatabaseManager.instance.getVideoDao().getVideoInFolder(folderPath)
+            databaseVideoLiveData =
+                DatabaseManager.instance.getVideoDao().getVideoInFolder(folderPath)
             updateFolderFileLiveData()
+        }
+    }
+
+    fun updateLastPlay(filePath: String) {
+        val folderPath = getDirPath(filePath)
+        when {
+            inSearchState.get() -> {
+                fileLiveData.value?.onEach {
+                    it.isLastPlay = it.filePath == filePath
+                }?.let {
+                    fileLiveData.postValue(it)
+                }
+            }
+            inRootFolder.get() -> {
+                folderLiveData.value?.onEach {
+                    it.isLastPlay = it.folderPath == folderPath
+                }?.let {
+                    folderLiveData.postValue(it)
+                }
+            }
+            currentFolderPath.get() == folderPath -> {
+                fileLiveData.value?.onEach {
+                    it.isLastPlay = it.filePath == filePath
+                }?.let {
+                    fileLiveData.postValue(it)
+                }
+            }
         }
     }
 
     fun exitSearchVideo() {
         inSearchState.set(false)
         if (inRootFolder.get()) {
-            folderLiveData.postValue(folderLiveData.value)
+            val lastPlayFolder = getLastPlayFolder()
+            folderLiveData.value?.onEach {
+                it.isLastPlay = it.folderPath == lastPlayFolder
+            }?.let {
+                folderLiveData.postValue(it)
+            }
         } else {
             val folderName = currentFolderName.get()!!
             val folderPath = currentFolderPath.get()!!
@@ -220,54 +261,20 @@ class LocalMediaViewModel @Inject constructor(
 
     fun playItem(itemPosition: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            showLoading()
-            val playSource = LocalMediaSource.build(
-                DanmuUtils,
-                itemPosition,
-                fileLiveData.value
-            )
-            hideLoading()
+            if (inSearchState.get()) {
+                val video = fileLiveData.value?.get(itemPosition)
+                if (video == null) {
+                    ToastCenter.showError("播放失败，找不到播放资源")
+                    return@launch
+                }
 
-            if (playSource == null) {
-                ToastCenter.showError("播放失败，找不到播放资源")
-                return@launch
+                val (index, folderVideos) = getFolderVideos(video.filePath)
+                    ?: return@launch
+
+                playIndexFromList(index, folderVideos)
+            } else {
+                playIndexFromList(itemPosition, fileLiveData.value)
             }
-            MediaSourceManager.getInstance().setSource(playSource)
-            playLiveData.postValue(Any())
-        }
-    }
-
-    fun checkPlayParams(data: VideoEntity) {
-        viewModelScope.launch {
-            val playParams = PlayParams(
-                data.filePath,
-                getFileName(data.filePath),
-                data.danmuPath,
-                data.subtitlePath,
-                0L,
-                data.danmuId,
-                MediaType.LOCAL_STORAGE
-            )
-
-            //读取上次播放位置
-            val playHistory = DatabaseManager.instance.getPlayHistoryDao()
-                .getPlayHistory(data.filePath, MediaType.LOCAL_STORAGE)
-            playParams.currentPosition = playHistory?.videoPosition ?: 0
-
-            //更新最后一次播放的Item
-            val updateFileData = fileLiveData.value?.onEach {
-                it.isLastPlay = it.filePath == data.filePath
-            }
-            fileLiveData.postValue(updateFileData)
-
-            //已存在弹幕及字幕
-            if (data.danmuPath != null && data.subtitlePath != null) {
-                playVideoLiveData.postValue(playParams)
-                return@launch
-            }
-
-            //自动加载弹幕及字幕
-            autoLoadSource(data, playParams)
         }
     }
 
@@ -285,18 +292,19 @@ class LocalMediaViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateFolderFileLiveData(updateInRootPath: Boolean = false) {
+    private fun updateFolderFileLiveData(updateInRootPath: Boolean = false) {
         databaseVideoLiveData ?: return
 
         fileLiveData.removeSource(sortLiveData)
 
-        val lastPlayHistory = queryLastPlayHistory()
 
         val updateLiveDate = { videoData:MutableList<VideoEntity>, sortType: FileSortType ->
             if (updateInRootPath || inRootFolder.get().not()) {
                 //是否为最后一次播放的文件
                 lastPlayHistory?.apply {
-                    videoData.find { it.filePath == url }?.isLastPlay = true
+                    videoData.forEach {
+                        it.isLastPlay = it.filePath == lastPlayHistory.value?.url
+                    }
                 }
 
                 //视频按文件名排序
@@ -311,6 +319,7 @@ class LocalMediaViewModel @Inject constructor(
                         ))
                     }
                 }
+
                 fileLiveData.postValue(videoData)
             }
         }
@@ -327,7 +336,7 @@ class LocalMediaViewModel @Inject constructor(
     }
 
     private suspend fun refreshSystemVideo(): Boolean {
-        return viewModelScope.async(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             //1.从系统中读出所有视频数据
             val systemVideos = MediaResolver.queryVideo()
 
@@ -349,7 +358,7 @@ class LocalMediaViewModel @Inject constructor(
             clearInvalidVideo(systemVideos)
 
             if (systemVideos.isEmpty())
-                return@async false
+                return@withContext false
 
             //3.从数据库中读出所有视频数据
             val databaseVideos = DatabaseManager.instance.getVideoDao().getAll()
@@ -357,7 +366,7 @@ class LocalMediaViewModel @Inject constructor(
             //4.数据库中无视频数据，直接将所有系统数据插入数据库
             if (databaseVideos.size == 0) {
                 DatabaseManager.instance.getVideoDao().insert(*systemVideos.toTypedArray())
-                return@async true
+                return@withContext true
             }
 
             //5.遍历数据库数据
@@ -389,74 +398,8 @@ class LocalMediaViewModel @Inject constructor(
                 DatabaseManager.instance.getVideoDao().insert(*systemVideos.toTypedArray())
             }
 
-            return@async true
-        }.await()
-    }
 
-    private suspend fun autoLoadSource(data: VideoEntity, playParams: PlayParams) {
-        withContext(Dispatchers.Default) {
-            showLoading()
-            //未绑定弹幕，尝试自动加载
-            if (data.danmuPath == null) {
-                //自动加载本地同名弹幕
-                var loadedDanmu = false
-                val autoLoadLocalDanmu = DanmuConfig.isAutoLoadLocalDanmu()
-                if (autoLoadLocalDanmu) {
-                    //从本地找同名弹幕
-                    DanmuUtils.findLocalDanmuByVideo(data.filePath)?.let {
-                        playParams.danmuPath = it
-                        loadedDanmu = true
-                    }
-                }
-                //自动加载网络弹幕
-                val autoLoadNetworkDanmu = DanmuConfig.isAutoLoadNetworkDanmu()
-                if (!loadedDanmu && autoLoadNetworkDanmu) {
-                    val fileHash = IOUtils.getFileHash(data.filePath)
-                    if (!fileHash.isNullOrEmpty()) {
-                        DanmuUtils.matchDanmuSilence(data.filePath, fileHash)?.let {
-                            playParams.danmuPath = it.first
-                            playParams.episodeId = it.second
-                            loadedDanmu = true
-                        }
-                    }
-                }
-
-                if (loadedDanmu) {
-                    DatabaseManager.instance.getVideoDao().updateDanmu(
-                        data.filePath, playParams.danmuPath!!, playParams.episodeId
-                    )
-                }
-            }
-
-            if (data.subtitlePath == null) {
-                //自动加载本地同名字幕
-                var loadedSubtitle = false
-                val autoLoadLocalSubtitle = SubtitleConfig.isAutoLoadLocalSubtitle()
-                if (autoLoadLocalSubtitle) {
-                    //从本地找同名字幕
-                    SubtitleUtils.findLocalSubtitleByVideo(data.filePath)?.let {
-                        playParams.subtitlePath = it
-                        loadedSubtitle = true
-                    }
-                }
-                //自动加载网络字幕
-                val autoLoadNetworkSubtitle = SubtitleConfig.isAutoLoadNetworkSubtitle()
-                if (!loadedSubtitle && autoLoadNetworkSubtitle) {
-                    SubtitleUtils.matchSubtitleSilence(DanmuUtils.Retrofit, data.filePath)?.let {
-                        playParams.subtitlePath = it
-                        loadedSubtitle = true
-                    }
-                }
-
-                if (loadedSubtitle) {
-                    DatabaseManager.instance.getVideoDao().updateSubtitle(
-                        data.filePath, playParams.subtitlePath!!
-                    )
-                }
-            }
-
-            hideLoading()
-            playVideoLiveData.postValue(playParams)
+            return@withContext true
         }
     }
 
@@ -488,11 +431,44 @@ class LocalMediaViewModel @Inject constructor(
     }
 
     /**
-     * 查询最近一次播放的视频记录
+     * 通过单个视频地址，获取其所在目录所有视频
      */
-    private suspend fun queryLastPlayHistory(): PlayHistoryEntity? {
-        return DatabaseManager.instance
-            .getPlayHistoryDao()
-            .gitLastPlayLiveData(MediaType.LOCAL_STORAGE)
+    private suspend fun getFolderVideos(filePath: String): Pair<Int, List<VideoEntity>>? {
+        val folderVideos = DatabaseManager.instance.getVideoDao()
+            .getFolderVideoByFilePath(filePath)
+        folderVideos.sortWith(FileComparator(
+            value = { getFileName(it.filePath) },
+            isDirectory = { false }
+        ))
+
+        //如果视频地址对应的目录下找不到，可能视频已经被移除
+        val index = folderVideos.indexOfFirst { it.filePath == filePath }
+        if (index == -1) {
+            ToastCenter.showError("播放失败，找不到播放资源")
+            return null
+        }
+        return Pair(index, folderVideos)
+    }
+
+    /**
+     * 播放视频列表中的某一个视频
+     */
+    private suspend fun playIndexFromList(index: Int, list: List<VideoEntity>?) {
+        showLoading()
+        val playSource = LocalMediaSource.build(DanmuUtils, index, list)
+        hideLoading()
+
+        if (playSource == null) {
+            ToastCenter.showError("播放失败，找不到播放资源")
+            return
+        }
+        MediaSourceManager.getInstance().setSource(playSource)
+        playLiveData.postValue(Any())
+    }
+
+    private fun getLastPlayFolder(): String? {
+        return lastPlayHistory.value?.url?.run {
+            getDirPath(this)
+        }
     }
 }

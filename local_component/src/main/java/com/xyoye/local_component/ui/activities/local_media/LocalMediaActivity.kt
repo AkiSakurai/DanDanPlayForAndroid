@@ -24,6 +24,7 @@ import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.FileSortType
+import com.xyoye.data_component.enums.MediaType
 import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
@@ -66,7 +67,7 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
 
         dataBinding.refreshLayout.setColorSchemeResources(R.color.text_theme)
         dataBinding.refreshLayout.isRefreshing = true
-        viewModel.listRoot()
+        viewModel.listRoot(true)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -194,7 +195,7 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
         }
 
         dataBinding.refreshLayout.setOnRefreshListener {
-            viewModel.listRoot()
+            viewModel.listRoot(true)
         }
 
         mToolbar?.setNavigationOnClickListener {
@@ -224,11 +225,11 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
             }
         }
 
-        viewModel.playVideoLiveData.observe(this) {
-            ARouter.getInstance()
-                .build(RouteTable.Player.Player)
-                .withParcelable("playParams", it)
-                .navigation()
+        //更新界面中的最近播放
+        viewModel.lastPlayHistory.observe(this) {
+            if (it?.mediaType == MediaType.LOCAL_STORAGE) {
+                viewModel.updateLastPlay(it.url)
+            }
         }
 
         viewModel.playLiveData.observe(this) {
