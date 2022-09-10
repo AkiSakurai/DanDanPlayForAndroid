@@ -5,7 +5,6 @@ import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.media.StreamMediaSource
 import com.xyoye.common_component.utils.DanmuUtilsModule
 import com.xyoye.common_component.utils.PlayHistoryUtils
-import com.xyoye.sardine.DavResource
 
 
 /**
@@ -17,7 +16,8 @@ object StreamSourceFactory {
         val videoSources = builder.videoSources.filterIsInstance<String>()
         val videoUrl = videoSources.getOrNull(builder.index) ?: return null
 
-        val history = PlayHistoryUtils.getPlayHistory(videoUrl, builder.mediaType)
+        val uniqueKey = generateUniqueKey(videoUrl)
+        val history = PlayHistoryUtils.getPlayHistory(uniqueKey, builder.mediaType)
 
         return StreamMediaSource(
             DanmuUtils,
@@ -27,7 +27,8 @@ object StreamSourceFactory {
             history?.videoPosition ?: 0L,
             history?.danmuPath,
             history?.episodeId ?: 0,
-            history?.subtitlePath
+            history?.subtitlePath,
+            uniqueKey
         )
     }
 

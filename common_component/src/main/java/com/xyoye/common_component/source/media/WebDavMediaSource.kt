@@ -24,7 +24,8 @@ class WebDavMediaSource(
     private val currentPosition: Long,
     private var danmuPath: String?,
     private var episodeId: Int,
-    private var subtitlePath: String?
+    private var subtitlePath: String?,
+    private val uniqueKey: String
 ) : BaseVideoSource(index, videoSources) {
 
     override fun getVideoUrl(): String {
@@ -78,7 +79,7 @@ class WebDavMediaSource(
     }
 
     override fun getUniqueKey(): String {
-        return WebDavSourceFactory.generateUniqueKey(rootPath, videoSources[index])
+        return uniqueKey
     }
 
 

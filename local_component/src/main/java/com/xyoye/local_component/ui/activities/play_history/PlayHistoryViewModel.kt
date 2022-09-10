@@ -47,7 +47,7 @@ class PlayHistoryViewModel @Inject constructor(
             if (mediaType == MediaType.STREAM_LINK || mediaType == MediaType.MAGNET_LINK) {
                 historyDao.deleteTypeAll(listOf(mediaType))
             } else {
-                historyDao.deleteTypeAll()
+                historyDao.deleteAll()
             }
         }
     }

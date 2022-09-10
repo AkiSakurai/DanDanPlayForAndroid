@@ -21,7 +21,8 @@ class TorrentMediaSource(
     private var currentPosition: Long,
     private var danmuPath: String?,
     private var episodeId: Int,
-    private var subtitlePath: String?
+    private var subtitlePath: String?,
+    private val uniqueKey: String
 ) : BaseVideoSource(index, videoSources) {
 
     override fun getVideoUrl(): String {
@@ -73,7 +74,7 @@ class TorrentMediaSource(
     }
 
     override fun getUniqueKey(): String {
-        return TorrentSourceFactory.generateUniqueKey(getTorrentPath(), index)
+        return uniqueKey
     }
 
     override suspend fun indexSource(index: Int): BaseVideoSource? {

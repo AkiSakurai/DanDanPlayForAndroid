@@ -107,7 +107,7 @@ class WebDavFileViewModel @Inject constructor(
                     val uniqueKey = WebDavSourceFactory.generateUniqueKey(addressUrl, it)
                     val history = DatabaseManager.instance
                         .getPlayHistoryDao()
-                        .getHistoryByKey(uniqueKey, MediaType.WEBDAV_SERVER)
+                        .getPlayHistory(uniqueKey, MediaType.WEBDAV_SERVER)
                     StorageFileBean(
                         false,
                         it.path,

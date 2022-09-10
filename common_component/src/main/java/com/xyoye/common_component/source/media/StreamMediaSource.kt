@@ -3,7 +3,6 @@ package com.xyoye.common_component.source.media
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.DanmuUtilsModule
-import com.xyoye.common_component.source.factory.StreamSourceFactory
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.enums.MediaType
 
@@ -20,6 +19,7 @@ class StreamMediaSource(
     private var danmuPath: String?,
     private var episodeId: Int,
     private var subtitlePath: String?,
+    private val uniqueKey: String
 ) : BaseVideoSource(index, videoSources) {
 
     override fun getVideoUrl(): String {
@@ -43,7 +43,7 @@ class StreamMediaSource(
     }
 
     override fun getUniqueKey(): String {
-        return StreamSourceFactory.generateUniqueKey(getVideoUrl())
+        return uniqueKey
     }
 
     override fun indexTitle(index: Int): String {

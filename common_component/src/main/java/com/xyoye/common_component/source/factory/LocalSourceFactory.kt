@@ -8,8 +8,9 @@ import com.xyoye.common_component.utils.DanmuUtilsModule
 import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.media.LocalMediaSource
+import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.SubtitleUtils
-import com.xyoye.data_component.data.remote.RemoteVideoData
+import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.MediaType
 
@@ -24,17 +25,21 @@ object LocalSourceFactory {
         val videoSources = builder.videoSources.filterIsInstance<VideoEntity>()
         val video = videoSources.getOrNull(builder.index) ?: return null
 
-        val (episodeId, danmuPath) = getVideoDanmu(DanmuUtils, video)
-        val subtitlePath = getVideoSubtitle(DanmuUtils, video)
-        val position = getHistoryPosition(video)
+
+        val uniqueKey = generateUniqueKey(videoSources[builder.index])
+        val history = PlayHistoryUtils.getPlayHistory(uniqueKey, MediaType.LOCAL_STORAGE)
+
+        val (episodeId, danmuPath) = getVideoDanmu(DanmuUtils, video, history)
+        val subtitlePath = getVideoSubtitle(DanmuUtils, video, history)
         return LocalMediaSource(
             DanmuUtils,
             builder.index,
             videoSources,
-            position,
+            history?.videoPosition ?: 0,
             danmuPath,
             episodeId,
-            subtitlePath
+            subtitlePath,
+            uniqueKey
         )
     }
 
@@ -42,18 +47,11 @@ object LocalSourceFactory {
         return entity.filePath.toMd5String()
     }
 
-    private suspend fun getHistoryPosition(video: VideoEntity): Long {
-        return DatabaseManager.instance
-            .getPlayHistoryDao()
-            .getPlayHistoryPosition(video.filePath, MediaType.LOCAL_STORAGE)
-            ?: 0L
-    }
 
-
-    private fun getVideoDanmu(DanmuUtils: DanmuUtilsModule, video: VideoEntity): Pair<Int, String?> {
+    private fun getVideoDanmu(DanmuUtils: DanmuUtilsModule, video: VideoEntity, history: PlayHistoryEntity?): Pair<Int, String?> {
         //当前视频已绑定弹幕
-        if (video.danmuPath != null) {
-            return Pair(video.danmuId, video.danmuPath)
+        if (history?.danmuPath != null) {
+            return Pair(history.episodeId, history.danmuPath)
         }
         //从本地找同名弹幕
         if (DanmuConfig.isAutoLoadSameNameDanmu()) {
@@ -65,10 +63,10 @@ object LocalSourceFactory {
     }
 
 
-    private suspend fun getVideoSubtitle(DanmuUtils: DanmuUtilsModule, video: VideoEntity): String? {
+    private suspend fun getVideoSubtitle(DanmuUtils: DanmuUtilsModule, video: VideoEntity, history: PlayHistoryEntity?): String? {
         //当前视频已绑定字幕
-        if (video.subtitlePath != null) {
-            return video.subtitlePath
+        if (history?.subtitlePath != null) {
+            return history.subtitlePath
         }
         //自动加载本地同名字幕
         if (SubtitleConfig.isAutoLoadSameNameSubtitle()) {

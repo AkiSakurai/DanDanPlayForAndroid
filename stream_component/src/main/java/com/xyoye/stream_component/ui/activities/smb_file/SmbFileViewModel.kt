@@ -121,7 +121,7 @@ class SmbFileViewModel @Inject constructor(
                     val uniqueKey = SmbSourceFactory.generateUniqueKey(getOpenedDirPath(), it)
                     val history = DatabaseManager.instance
                         .getPlayHistoryDao()
-                        .getHistoryByKey(uniqueKey, MediaType.SMB_SERVER)
+                        .getPlayHistory(uniqueKey, MediaType.SMB_SERVER)
                     StorageFileBean(
                         false,
                         it.name,
