@@ -55,9 +55,6 @@ class DanDanVideoPlayer(
     //音频焦点监听
     private var mAudioFocusHelper: AudioFocusHelper
 
-    //进度管理器
-    private var mProgressBlock: ((position: Long, duration: Long) -> Unit)? = null
-
     //视图控制器
     private var mVideoController: VideoController? = null
 
@@ -227,8 +224,7 @@ class DanDanVideoPlayer(
     override fun onCompletion() {
         setPlayState(PlayState.STATE_COMPLETED)
         keepScreenOn = false
-        val duration = getDuration()
-        mProgressBlock?.invoke(duration, duration)
+        PlayRecorder.recordProgress(videoSource, 0, getDuration())
     }
 
     override fun onInfo(what: Int, extra: Int) {
@@ -330,12 +326,13 @@ class DanDanVideoPlayer(
      * 保存播放信息
      */
     fun recordPlayInfo() {
+        if (this::videoSource.isInitialized.not()){
+            return
+        }
         //保存最后一帧
         PlayRecorder.recordImage(videoSource.getUniqueKey(), mRenderView)
-        //保存进度
-        val position = mVideoPlayer.getCurrentPosition()
-        val duration = mVideoPlayer.getDuration()
-        mProgressBlock?.invoke(position, duration)
+        //保存播放进度
+        PlayRecorder.recordProgress(videoSource, getCurrentPosition(), getDuration())
     }
 
     fun release() {
@@ -385,9 +382,5 @@ class DanDanVideoPlayer(
             it.setMediaPlayer(this)
             addView(it, mDefaultLayoutParams)
         }
-    }
-
-    fun setProgressObserver(progressBlock: (position: Long, duration: Long) -> Unit) {
-        mProgressBlock = progressBlock
     }
 }
