@@ -336,6 +336,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     override fun nextSource() {
+        showLoading()
+        dataBinding.danDanPlayer.pause()
         lifecycleScope.launch(Dispatchers.IO) {
             val source = videoSource
             var nextSource: VideoSource? = null
@@ -347,12 +349,15 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 return@launch
             }
             withContext(Dispatchers.Main) {
+                hideLoading()
                 applyPlaySource(nextSource)
             }
         }
     }
 
     override fun previousSource() {
+        showLoading()
+        dataBinding.danDanPlayer.pause()
         lifecycleScope.launch(Dispatchers.IO) {
             val source = videoSource
             var previousSource: VideoSource? = null
@@ -364,6 +369,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 return@launch
             }
             withContext(Dispatchers.Main) {
+                hideLoading()
                 applyPlaySource(previousSource)
             }
         }
