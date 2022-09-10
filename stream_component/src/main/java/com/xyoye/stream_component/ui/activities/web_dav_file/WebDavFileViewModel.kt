@@ -12,6 +12,7 @@ import com.xyoye.common_component.source.factory.WebDavSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
+import com.xyoye.data_component.bean.WebDavFileBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.sardine.DavResource
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Credentials
 import javax.inject.Inject
+import java.net.URI
 
 @HiltViewModel
 class WebDavFileViewModel @Inject constructor(
@@ -109,12 +111,14 @@ class WebDavFileViewModel @Inject constructor(
                         .getPlayHistoryDao()
                         .getHistoryByKey(uniqueKey, MediaType.WEBDAV_SERVER)
                     WebDavFileBean(
-                        it,
+                        it.href,
+                        it.name ?: it.displayName,
                         history?.danmuPath,
                         history?.subtitlePath,
                         history?.videoPosition ?: 0,
                         history?.videoDuration ?: 0,
-                        uniqueKey)
+                        uniqueKey
+                    )
                 }
 
             fileLiveData.postValue(displayFiles)
@@ -134,10 +138,10 @@ class WebDavFileViewModel @Inject constructor(
         return true
     }
 
-    fun playItem(davResource: DavResource) {
+    fun playItem(href: URI) {
         viewModelScope.launch(Dispatchers.IO) {
             val videoSources = curDirectoryFiles.filter { isVideoFile(it.name) }
-            val index = videoSources.indexOf(davResource)
+            val index = videoSources.indexOfFirst { it.href == href }
             if (videoSources.isNullOrEmpty() || index < 0) {
                 ToastCenter.showError("播放失败，不支持播放的资源")
                 return@launch
