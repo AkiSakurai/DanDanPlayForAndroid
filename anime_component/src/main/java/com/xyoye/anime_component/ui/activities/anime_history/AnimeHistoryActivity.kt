@@ -67,7 +67,7 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
 
             layoutManager = gridEmpty(3)
 
-            adapter = buildAdapter<CloudHistoryData> {
+            adapter = buildAdapter {
 
                 addEmptyView(R.layout.layout_empty)
 

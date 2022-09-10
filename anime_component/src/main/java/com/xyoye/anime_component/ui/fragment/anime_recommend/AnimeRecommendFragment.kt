@@ -72,7 +72,7 @@ class AnimeRecommendFragment :
         dataBinding.recommendMoreRv.apply {
             layoutManager = grid(2)
 
-            adapter = buildAdapter<AnimeData> {
+            adapter = buildAdapter {
                 addItem<AnimeData, ItemAnimeRecommendBinding>(R.layout.item_anime_recommend) {
                     initView { data, _, _ ->
                         itemBinding.apply {
