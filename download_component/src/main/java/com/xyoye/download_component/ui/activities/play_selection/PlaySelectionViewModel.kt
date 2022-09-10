@@ -5,13 +5,20 @@ import androidx.lifecycle.viewModelScope
 import com.xunlei.downloadlib.parameter.*
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.media.TorrentMediaSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.utils.DanmuUtilsModule
 import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.thunder.ThunderManager
 import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.data_component.enums.MediaType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
-class PlaySelectionViewModel : BaseViewModel() {
+@HiltViewModel
+class PlaySelectionViewModel @Inject constructor(
+    val DanmuUtils: DanmuUtilsModule
+) : BaseViewModel() {
     val torrentDownloadLiveData = MutableLiveData<String>()
     val dismissLiveData = MutableLiveData<Boolean>()
     val playLiveData = MutableLiveData<Any>()
@@ -38,7 +45,10 @@ class PlaySelectionViewModel : BaseViewModel() {
     fun torrentPlay(torrentPath: String, selectIndex: Int) {
         viewModelScope.launch {
             showLoading()
-            val mediaSource = TorrentMediaSource.build(selectIndex, torrentPath)
+            val mediaSource = VideoSourceFactory.Builder()
+                .setRootPath(torrentPath)
+                .setIndex(selectIndex)
+                .create(DanmuUtils, MediaType.MAGNET_LINK)
             hideLoading()
 
             if (mediaSource == null) {

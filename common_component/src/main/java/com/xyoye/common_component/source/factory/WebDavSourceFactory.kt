@@ -1,28 +1,71 @@
-package com.xyoye.common_component.source.helper
+package com.xyoye.common_component.source.factory
 
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.network.RetrofitModule
-import com.xyoye.common_component.utils.DanmuUtilsModule
-import com.xyoye.common_component.utils.FileHashUtils
-import com.xyoye.common_component.utils.SubtitleUtils
-import com.xyoye.common_component.utils.getFileNameNoExtension
+
+import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.source.media.WebDavMediaSource
+import com.xyoye.common_component.utils.*
 import com.xyoye.data_component.entity.PlayHistoryEntity
+import com.xyoye.data_component.enums.MediaType
 import com.xyoye.sardine.DavResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+
 /**
- * Created by xyoye on 2021/11/16.
+ * Created by xyoye on 2022/1/11
  */
+object WebDavSourceFactory {
 
-object WebDavMediaSourceHelper {
+    suspend fun create(DanmuUtils: DanmuUtilsModule, builder: VideoSourceFactory.Builder): WebDavMediaSource? {
+        val videoSources = builder.videoSources.filterIsInstance<DavResource>()
+        val extSources = builder.extraSources.filterIsInstance<DavResource>()
 
-    fun getHistoryPosition(entity: PlayHistoryEntity?): Long {
+        val davResource = videoSources.getOrNull(builder.index)
+            ?: return null
+
+        val videoUrl = builder.rootPath + davResource.href.toASCIIString()
+        val history = PlayHistoryUtils.getPlayHistory(videoUrl, MediaType.WEBDAV_SERVER)
+
+        val position = getHistoryPosition(history)
+        val (episodeId, danmuPath) = getVideoDanmu(
+            DanmuUtils,
+            davResource,
+            extSources,
+            builder.rootPath,
+            builder.httpHeaders,
+            history
+        )
+        val subtitlePath = getVideoSubtitle(
+            DanmuUtils,
+            davResource,
+            extSources,
+            builder.rootPath,
+            builder.httpHeaders,
+            history
+        )
+
+        return WebDavMediaSource(
+            DanmuUtils,
+            builder.rootPath,
+            builder.httpHeaders,
+            builder.index,
+            videoSources,
+            extSources,
+            position,
+            danmuPath,
+            episodeId,
+            subtitlePath
+        )
+    }
+
+    private fun getHistoryPosition(entity: PlayHistoryEntity?): Long {
         return entity?.videoPosition ?: 0L
     }
 
-    suspend fun getVideoDanmu(
+
+    private suspend fun getVideoDanmu(
         DanmuUtils: DanmuUtilsModule,
         davResource: DavResource,
         extSources: List<DavResource>,
@@ -37,23 +80,22 @@ object WebDavMediaSourceHelper {
 
         //匹配同文件夹内同名弹幕
         if (DanmuConfig.isAutoLoadDanmuNetworkStorage()) {
-            val danmuPath = findAndDownloadDanmu(DanmuUtils, davResource, extSources, rootPath, header)
+            val danmuPath = findAndDownloadDanmu(
+                DanmuUtils,
+                davResource,
+                extSources,
+                rootPath,
+                header
+            )
             if (danmuPath != null) {
                 return Pair(0, danmuPath)
             }
         }
 
-        //匹配视频网络弹幕
-        if (DanmuConfig.isAutoMatchDanmuNetworkStorage()) {
-            val matchResult = matchAndDownloadDanmu(DanmuUtils, davResource, rootPath, header)
-            if (matchResult != null) {
-                return Pair(matchResult.second, matchResult.first)
-            }
-        }
         return Pair(0, null)
     }
 
-    suspend fun getVideoSubtitle(
+    private suspend fun getVideoSubtitle(
         DanmuUtils: DanmuUtilsModule,
         davResource: DavResource,
         extSources: List<DavResource>,
@@ -134,31 +176,6 @@ object WebDavMediaSourceHelper {
                 e.printStackTrace()
             }
             return@withContext null
-        }
-    }
-
-    private suspend fun matchAndDownloadDanmu(
-        DanmuUtils: DanmuUtilsModule,
-        davResource: DavResource,
-        rootPath: String,
-        header: Map<String, String>
-    ): Pair<String, Int>? {
-        return withContext(Dispatchers.IO) {
-            val url = rootPath + davResource.href.toASCIIString()
-            var hash: String? = null
-            try {
-                //目标长度为前16M，17是容错
-                val httpHelper = HashMap(header)
-                httpHelper["range"] = "bytes=0-${17 * 1024 * 1024}"
-                val responseBody = DanmuUtils.Retrofit.extService.downloadResource(url, header)
-                hash = FileHashUtils.getHash(responseBody.byteStream())
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            if (hash.isNullOrEmpty()) {
-                return@withContext null
-            }
-            return@withContext DanmuUtils.matchDanmuSilence(davResource.name, hash)
         }
     }
 }

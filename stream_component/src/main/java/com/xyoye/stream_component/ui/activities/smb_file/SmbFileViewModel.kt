@@ -6,7 +6,7 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.extension.filterHideFile
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.media.SmbMediaSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.server.SMBPlayServer
 import com.xyoye.common_component.utils.smb.SMBException
@@ -16,6 +16,7 @@ import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -154,8 +155,13 @@ class SmbFileViewModel @Inject constructor(
                 ?: emptyList()
 
             showLoading()
-            val mediaSource =
-                SmbMediaSource.build(DanmuUtils, index, videoSources, extSources, getOpenedDirPath())
+
+            val mediaSource = VideoSourceFactory.Builder()
+                .setVideoSources(videoSources)
+                .setExtraSource(extSources)
+                .setRootPath(getOpenedDirPath())
+                .setIndex(index)
+                .create(DanmuUtils, MediaType.SMB_SERVER)
             hideLoading()
 
             if (mediaSource == null) {

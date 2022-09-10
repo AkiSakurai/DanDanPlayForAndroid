@@ -1,11 +1,9 @@
 package com.xyoye.common_component.source.media
 
 import com.xyoye.common_component.extension.formatFileName
-import com.xyoye.common_component.source.helper.SmbMediaSourceHelper
-import com.xyoye.common_component.source.inter.ExtraSource
-import com.xyoye.common_component.source.inter.GroupSource
+import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.DanmuUtilsModule
-import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.smb.SMBFile
 import com.xyoye.data_component.enums.MediaType
@@ -14,8 +12,9 @@ import com.xyoye.data_component.enums.MediaType
 /**
  * Created by xyoye on 2021/11/18
  */
-class SmbMediaSource private constructor(
-    private val DanmuUtils: DanmuUtilsModule,
+
+class SmbMediaSource(
+    private val DaumUtils: DanmuUtilsModule,
     private val index: Int,
     private val videoSources: List<SMBFile>,
     private val extSources: List<SMBFile>,
@@ -25,40 +24,7 @@ class SmbMediaSource private constructor(
     private var danmuPath: String?,
     private var episodeId: Int,
     private var subtitlePath: String?
-) : GroupVideoSource(index, videoSources), ExtraSource {
-
-    companion object {
-
-        suspend fun build(
-            DanmuUtils: DanmuUtilsModule,
-            index: Int,
-            videoSources: List<SMBFile>,
-            extSources: List<SMBFile>,
-            rootPath: String,
-        ): SmbMediaSource? {
-            val smbFile = videoSources.getOrNull(index) ?: return null
-            val proxyUrl = SmbMediaSourceHelper.createProxyUrl(rootPath, smbFile)
-            val history = PlayHistoryUtils.getPlayHistory(proxyUrl, MediaType.SMB_SERVER)
-            val position = SmbMediaSourceHelper.getHistoryPosition(history)
-            val (episodeId, danmuPath) = SmbMediaSourceHelper
-                .getVideoDanmu(DanmuUtils, history, rootPath, smbFile, extSources)
-            val subtitlePath = SmbMediaSourceHelper
-                .getVideoSubtitle(history, rootPath, smbFile, extSources)
-
-            return SmbMediaSource(
-                DanmuUtils,
-                index,
-                videoSources,
-                extSources,
-                rootPath,
-                proxyUrl,
-                position,
-                danmuPath,
-                episodeId,
-                subtitlePath
-            )
-        }
-    }
+) : BaseVideoSource(index, videoSources) {
 
     override fun getDanmuPath(): String? {
         return danmuPath
@@ -84,10 +50,16 @@ class SmbMediaSource private constructor(
         subtitlePath = path
     }
 
-    override suspend fun indexSource(index: Int): GroupSource? {
-        if (index in videoSources.indices)
-            return build(DanmuUtils, index, videoSources, extSources, rootPath)
-        return null
+
+    override suspend fun indexSource(index: Int): BaseVideoSource? {
+        val source = VideoSourceFactory.Builder()
+            .setVideoSources(videoSources)
+            .setExtraSource(extSources)
+            .setRootPath(rootPath)
+            .setIndex(index)
+            .create(DaumUtils, getMediaType())
+            ?: return null
+        return source as SmbMediaSource
     }
 
     override fun getVideoUrl(): String {

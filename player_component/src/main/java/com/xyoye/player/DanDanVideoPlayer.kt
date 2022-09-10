@@ -17,7 +17,7 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.xyoye.cache.CacheManager
-import com.xyoye.common_component.source.inter.VideoSource
+import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.VideoScreenScale
@@ -67,7 +67,7 @@ class DanDanVideoPlayer(
     private lateinit var mVideoPlayer: AbstractVideoPlayer
 
     //播放资源
-    private lateinit var videoSource: VideoSource
+    private lateinit var videoSource: BaseVideoSource
 
     //当前音量
     private var mCurrentVolume = PointF(0f, 0f)
@@ -125,7 +125,7 @@ class DanDanVideoPlayer(
         }
     }
 
-    override fun getVideoSource(): VideoSource {
+    override fun getVideoSource(): BaseVideoSource {
         return videoSource
     }
 
@@ -365,7 +365,7 @@ class DanDanVideoPlayer(
         }
     }
 
-    fun setVideoSource(source: VideoSource) {
+    fun setVideoSource(source: BaseVideoSource) {
         videoSource = source
     }
 

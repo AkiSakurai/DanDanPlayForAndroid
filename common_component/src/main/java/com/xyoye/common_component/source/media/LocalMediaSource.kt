@@ -1,9 +1,9 @@
 package com.xyoye.common_component.source.media
 
-import com.xyoye.common_component.utils.*
-import com.xyoye.common_component.source.helper.LocalMediaSourceHelper
-import com.xyoye.common_component.source.inter.ExtraSource
-import com.xyoye.common_component.source.inter.GroupSource
+
+import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.utils.DanmuUtilsModule
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.MediaType
@@ -12,36 +12,16 @@ import com.xyoye.data_component.enums.MediaType
  * Created by xyoye on 2021/11/14.
  */
 
-class LocalMediaSource private constructor(
-    private val DanmuUtils: DanmuUtilsModule,
+class LocalMediaSource (
+    private val DaumUtils: DanmuUtilsModule,
     private val index: Int,
     private val videoSources: List<VideoEntity>,
     private val currentPosition: Long,
     private var danmuPath: String?,
     private var episodeId: Int,
     private var subtitlePath: String?
-) : GroupVideoSource(index, videoSources), ExtraSource {
 
-    companion object {
-
-
-        suspend fun build(DanmuUtils: DanmuUtilsModule, index: Int, videoSources: List<VideoEntity>?): LocalMediaSource? {
-            val video = videoSources?.getOrNull(index) ?: return null
-
-            val (episodeId, danmuPath) = LocalMediaSourceHelper.getVideoDanmu(DanmuUtils, video)
-            val subtitlePath = LocalMediaSourceHelper.getVideoSubtitle(DanmuUtils, video)
-            val position = LocalMediaSourceHelper.getHistoryPosition(DanmuUtils, video)
-            return LocalMediaSource(
-                DanmuUtils,
-                index,
-                videoSources,
-                position,
-                danmuPath,
-                episodeId,
-                subtitlePath
-            )
-        }
-    }
+) : BaseVideoSource(index, videoSources) {
 
     override fun getVideoUrl(): String {
         return videoSources[index].filePath
@@ -97,9 +77,13 @@ class LocalMediaSource private constructor(
         } ?: ""
     }
 
-    override suspend fun indexSource(index: Int): GroupSource? {
-        if (index in videoSources.indices)
-            return build(DanmuUtils, index, videoSources)
-        return null
+
+    override suspend fun indexSource(index: Int): BaseVideoSource? {
+        val source = VideoSourceFactory.Builder()
+            .setVideoSources(videoSources)
+            .setIndex(index)
+            .create(DaumUtils, getMediaType())
+            ?: return null
+        return source as LocalMediaSource
     }
 }

@@ -1,12 +1,10 @@
 package com.xyoye.common_component.source.media
 
-import com.xyoye.common_component.source.helper.RemoteMediaSourceHelper
+import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.helper.SourceHelper
-import com.xyoye.common_component.source.inter.ExtraSource
-import com.xyoye.common_component.source.inter.GroupSource
 import com.xyoye.common_component.utils.DanmuUtilsModule
-import com.xyoye.common_component.utils.PlayHistoryUtils
-import com.xyoye.common_component.utils.RemoteHelper
+
 import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.enums.MediaType
 
@@ -14,8 +12,9 @@ import com.xyoye.data_component.enums.MediaType
  * Created by xyoye on 2021/11/21.
  */
 
-class RemoteMediaSource private constructor(
-    private val DanmuUtils: DanmuUtilsModule,
+
+class RemoteMediaSource(
+    private val DaumUtils: DanmuUtilsModule,
     private val index: Int,
     private val videoSources: List<RemoteVideoData>,
     private val playUrl: String,
@@ -23,38 +22,8 @@ class RemoteMediaSource private constructor(
     private var danmuPath: String?,
     private var episodeId: Int,
     private var subtitlePath: String?
-) : GroupVideoSource(index, videoSources), ExtraSource {
 
-    companion object {
-
-        suspend fun build(
-            DanmuUtils: DanmuUtilsModule,
-            index: Int,
-            videoSources: List<RemoteVideoData>
-        ): RemoteMediaSource? {
-            val videoData = videoSources.getOrNull(index) ?: return null
-
-            val playUrl = RemoteHelper.getInstance().buildVideoUrl(videoData.Id)
-            val historyEntity = PlayHistoryUtils.getPlayHistory(playUrl, MediaType.REMOTE_STORAGE)
-            val position = RemoteMediaSourceHelper.getHistoryPosition(historyEntity)
-            val (episodeId, danmuPath) = RemoteMediaSourceHelper.getVideoDanmu(
-                DanmuUtils,
-                historyEntity,
-                videoData
-            )
-            val subtitlePath = RemoteMediaSourceHelper.getVideoSubtitle(DanmuUtils, historyEntity, videoData)
-            return RemoteMediaSource(
-                DanmuUtils,
-                index,
-                videoSources,
-                playUrl,
-                position,
-                danmuPath,
-                episodeId,
-                subtitlePath
-            )
-        }
-    }
+) : BaseVideoSource(index, videoSources) {
 
     override fun getDanmuPath(): String? {
         return danmuPath
@@ -80,10 +49,14 @@ class RemoteMediaSource private constructor(
         subtitlePath = path
     }
 
-    override suspend fun indexSource(index: Int): GroupSource? {
-        return videoSources.getOrNull(index)?.let {
-            build(DanmuUtils, index, videoSources)
-        }
+
+    override suspend fun indexSource(index: Int): BaseVideoSource? {
+        val source = VideoSourceFactory.Builder()
+            .setExtraSource(videoSources)
+            .setIndex(index)
+            .create(DaumUtils, getMediaType())
+            ?: return null
+        return source as RemoteMediaSource
     }
 
     override fun getVideoUrl(): String {

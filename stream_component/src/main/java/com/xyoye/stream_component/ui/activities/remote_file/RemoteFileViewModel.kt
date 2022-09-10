@@ -6,12 +6,13 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.network.RetrofitModule
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.media.RemoteMediaSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.remote.RemoteFileHelper
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -72,11 +73,10 @@ class RemoteFileViewModel @Inject constructor(
             }
 
             showLoading()
-            val mediaSource = RemoteMediaSource.build(
-                DanmuUtils,
-                index,
-                videoSources
-            )
+            val mediaSource = VideoSourceFactory.Builder()
+                .setVideoSources(videoSources)
+                .setIndex(index)
+                .create(DanmuUtils, MediaType.REMOTE_STORAGE)
             hideLoading()
 
             if (mediaSource == null) {

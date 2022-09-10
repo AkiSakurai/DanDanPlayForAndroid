@@ -6,7 +6,7 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.extension.filterHideFile
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.media.FTPMediaSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.ftp.FTPException
 import com.xyoye.common_component.utils.ftp.FTPManager
@@ -15,6 +15,7 @@ import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -155,8 +156,13 @@ class FTPFileViewModel @Inject constructor(
                 ?: emptyList()
 
             showLoading()
-            val mediaSource =
-                FTPMediaSource.build(DanmuUtils, index, videoSources, extSources, getOpenedDirPath())
+
+            val mediaSource = VideoSourceFactory.Builder()
+                .setVideoSources(videoSources)
+                .setExtraSource(extSources)
+                .setRootPath(getOpenedDirPath())
+                .setIndex(index)
+                .create(DanmuUtils, MediaType.FTP_SERVER)
             hideLoading()
 
             if (mediaSource == null) {
