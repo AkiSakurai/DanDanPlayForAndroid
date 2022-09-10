@@ -23,6 +23,9 @@ allprojects {
         google()
         mavenCentral()
         maven { url 'https://developer.huawei.com/repo/'}
+
+        //needed by exoplayer 1.5
+        jcenter()
     }
 }
 
