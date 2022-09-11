@@ -16,6 +16,7 @@ import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.enums.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,6 +30,8 @@ class RemoteFileFragmentViewModel @Inject constructor(
 
     val curDirectoryFiles = mutableListOf<RemoteVideoData>()
 
+    private var refreshJob: Job? = null
+
     fun initDirectoryFiles(fileList: MutableList<RemoteVideoData>?) {
         curDirectoryFiles.clear()
         fileList?.let {
@@ -38,7 +41,8 @@ class RemoteFileFragmentViewModel @Inject constructor(
     }
 
     fun refreshDirectoryWithHistory() {
-        viewModelScope.launch {
+        refreshJob?.cancel()
+        refreshJob = viewModelScope.launch(Dispatchers.IO) {
             val storageFiles = curDirectoryFiles.map {
                 val uniqueKey = RemoteSourceFactory.generateUniqueKey(it)
                 val history = DatabaseManager.instance
