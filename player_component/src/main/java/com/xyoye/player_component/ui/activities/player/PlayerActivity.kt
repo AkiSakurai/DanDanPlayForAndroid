@@ -79,11 +79,11 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
         registerReceiver()
 
+        initPlayerConfig()
+
         initPlayer()
 
         initListener()
-
-        initPlayerConfig()
 
         applyPlaySource(VideoSourceManager.getInstance().getSource())
     }
