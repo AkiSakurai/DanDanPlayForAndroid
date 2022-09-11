@@ -18,7 +18,7 @@ class DefaultRetrofit private constructor() {
         private const val baseUrl = "https://api.dandanplay.net/"
         private const val resUrl = "http://res.dandanplay.net/"
         private const val shooterUrl = "http://api.assrt.net/"
-        private const val torrentUrl = "https://m2t.chinacloudsites.cn/"
+        private const val torrentUrl = "https://m2t.dandanplay.net/"
         private const val remoteUrl = "http://127.0.0.1:80/"
 
         val service = Holder.instance.retrofitService
