@@ -56,7 +56,8 @@ class PlayerIntentViewModel @Inject constructor(
             showLoading()
             val mediaSource = VideoSourceFactory.Builder()
                 .setVideoSources(listOf(url))
-                .create(DanmuUtils, MediaType.OTHER_STORAGE)
+                .create(DanmuUtils, MediaType.STREAM_LINK)
+            
             hideLoading()
 
             if (mediaSource == null) {
