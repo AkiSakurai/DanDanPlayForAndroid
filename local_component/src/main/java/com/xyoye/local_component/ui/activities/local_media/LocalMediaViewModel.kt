@@ -3,7 +3,9 @@ package com.xyoye.local_component.ui.activities.local_media
 import android.net.Uri
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import androidx.lifecycle.*
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.DanmuConfig
@@ -13,7 +15,6 @@ import com.xyoye.common_component.extension.deduplication
 import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.network.RetrofitModule
-import com.xyoye.common_component.network.request.RequestErrorHandler
 import com.xyoye.common_component.resolver.MediaResolver
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
@@ -25,11 +26,11 @@ import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.FileSortType
 import com.xyoye.data_component.enums.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
-
-import kotlinx.coroutines.*
-import java.util.*
 import javax.inject.Inject
-import kotlin.collections.HashMap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @HiltViewModel
@@ -106,7 +107,7 @@ class LocalMediaViewModel @Inject constructor(
                 return@launch
             }
 
-            playItem(lastHistory.uniqueKey)
+            playItem(lastHistory.url)
         }
     }
 
