@@ -90,6 +90,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     override fun onPause() {
         dataBinding.danDanPlayer.pause()
+        dataBinding.danDanPlayer.recordPlayInfo()
         super.onPause()
     }
 
