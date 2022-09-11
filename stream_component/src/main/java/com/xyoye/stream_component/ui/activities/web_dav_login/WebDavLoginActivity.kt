@@ -32,6 +32,7 @@ class WebDavLoginActivity : BaseActivity<WebDavLoginViewModel, ActivityWebDavLog
         ARouter.getInstance().inject(this)
 
         WebDavLoginDialog(
+            this,
             editData,
             addMediaStorage = {
                 viewModel.addWebDavStorage(editData, it)
@@ -40,6 +41,6 @@ class WebDavLoginActivity : BaseActivity<WebDavLoginViewModel, ActivityWebDavLog
                 viewModel.testConnect(it)
             },
             viewModel.testConnectLiveData
-        ).show(this)
+        ).show()
     }
 }

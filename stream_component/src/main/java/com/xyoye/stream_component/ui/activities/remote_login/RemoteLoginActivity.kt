@@ -42,6 +42,7 @@ class RemoteLoginActivity : BaseActivity<RemoteLoginViewModel, ActivityRemoteLog
         ARouter.getInstance().inject(this)
 
         loginDialog = RemoteLoginDialog(
+            this,
             editData,
             addMediaStorage = {
                 viewModel.addRemoteStorage(editData, it)
@@ -54,7 +55,7 @@ class RemoteLoginActivity : BaseActivity<RemoteLoginViewModel, ActivityRemoteLog
                 launchScanActivity()
             }
         )
-        loginDialog.show(this)
+        loginDialog.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

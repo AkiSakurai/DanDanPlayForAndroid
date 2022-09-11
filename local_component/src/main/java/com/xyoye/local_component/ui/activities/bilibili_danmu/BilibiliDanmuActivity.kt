@@ -69,6 +69,7 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
 
     private fun showActionDialog() {
         BottomActionDialog(
+            this,
             mutableListOf(
                 SheetActionBean(DOWNLOAD_BY_LINK, "选取链接下载", R.drawable.ic_select_link),
                 SheetActionBean(DOWNLOAD_BY_URL, "输入链接下载", R.drawable.ic_input_code),
@@ -87,7 +88,7 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
                 else -> showInputDialog(it)
             }
             return@BottomActionDialog true
-        }.show(this)
+        }.show()
     }
 
     private fun showInputDialog(action: Int) {
@@ -99,6 +100,7 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
         }
 
         CommonEditDialog(
+            this,
             EditBean(title, wranning, hint),
             inputOnlyDigit = action == DOWNLOAD_BY_AV_CODE
         ) {
@@ -107,6 +109,6 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
                 DOWNLOAD_BY_AV_CODE -> viewModel.downloadByCode(it, true)
                 DOWNLOAD_BY_BV_CODE -> viewModel.downloadByCode(it, false)
             }
-        }.show(this)
+        }.show()
     }
 }

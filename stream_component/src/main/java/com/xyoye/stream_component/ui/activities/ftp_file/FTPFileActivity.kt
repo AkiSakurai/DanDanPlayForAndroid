@@ -80,7 +80,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
 
     override fun observeLoadingDialog() {
         //替换弹窗观察者
-        viewModel.loadingObserver.observe(this, {
+        viewModel.loadingObserver.observe(this) {
             if (dataBinding.refreshLayout.isRefreshing) {
                 dataBinding.refreshLayout.isRefreshing = false
             }
@@ -88,7 +88,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
             if (it.first > 0) {
                 dataBinding.refreshLayout.isRefreshing = true
             }
-        })
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -169,7 +169,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
             return
         }
 
-        CommonDialog.Builder().run {
+        CommonDialog.Builder(this@FTPFileActivity).run {
             content = "FTP视频播放不能调整进度至未缓冲位置，请谨慎调整视频进度"
             addNegative()
             addPositive {
@@ -178,6 +178,6 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
             }
             addNoShowAgain { AppConfig.putShowFTPVideoTips(!it) }
             build()
-        }.show(this@FTPFileActivity)
+        }.show()
     }
 }

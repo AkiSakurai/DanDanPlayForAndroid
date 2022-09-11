@@ -32,6 +32,7 @@ class SmbLoginActivity : BaseActivity<SmbLoginViewModel, ActivitySmbLoginBinding
         ARouter.getInstance().inject(this)
 
         SmbLoginDialog(
+            this,
             editData,
             addMediaStorage = {
                 viewModel.addWebDavStorage(editData, it)
@@ -40,6 +41,6 @@ class SmbLoginActivity : BaseActivity<SmbLoginViewModel, ActivitySmbLoginBinding
                 viewModel.testConnect(it)
             },
             viewModel.testConnectLiveData
-        ).show(this)
+        ).show()
     }
 }
