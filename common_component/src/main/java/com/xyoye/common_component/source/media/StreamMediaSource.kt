@@ -19,7 +19,8 @@ class StreamMediaSource(
     private var danmuPath: String?,
     private var episodeId: Int,
     private var subtitlePath: String?,
-    private val uniqueKey: String
+    private val uniqueKey: String,
+    private val mediaType: MediaType,
 ) : BaseVideoSource(index, videoSources) {
 
     override fun getVideoUrl(): String {
@@ -35,7 +36,7 @@ class StreamMediaSource(
     }
 
     override fun getMediaType(): MediaType {
-        return MediaType.STREAM_LINK
+        return mediaType
     }
 
     override fun getHttpHeader(): Map<String, String>? {
