@@ -47,6 +47,9 @@ abstract class BaseVideoController(
     //隐藏视图Runnable
     protected var mHideControllerJob: Job? = null
 
+    //重啓播放器回调
+    protected var mRestartPlayer: (() -> Unit)? = null
+
     //刷新进度Runnable
     protected var mUpdateProgress: Runnable = object : Runnable {
         override fun run() {
