@@ -44,6 +44,8 @@ dependencies {
 
     implementation(Dependencies.VLC.vlc)
 
+    implementation(project(":repository:ijkplayer"))
+
     kapt(Dependencies.Alibaba.arouter_compiler)
 
     api(Dependencies.Google.hilt)
