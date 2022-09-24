@@ -62,7 +62,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         }
 
 
-        var videoUri = if (path.startsWith("/") || path.startsWith("content://")) {
+        var videoUri = if (path.startsWith("/")) {
             Uri.fromFile(File(path))
         } else {
             Uri.parse(path)
