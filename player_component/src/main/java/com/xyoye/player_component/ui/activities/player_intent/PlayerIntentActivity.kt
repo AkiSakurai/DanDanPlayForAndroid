@@ -57,11 +57,12 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
             viewModel.addUnrecognizedFile(videoUrl)
         }
 
-        Intent(this, ExtendPermissionGrantService::class.java)
+        Intent(this.applicationContext, ExtendPermissionGrantService::class.java)
             .apply {
                 setDataAndType(videoUri,"video/mp4" )
+                action = intent.action
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                startService(this)
+                startForegroundService(this)
             }
 
         viewModel.openIntentUrl(videoUrl)
