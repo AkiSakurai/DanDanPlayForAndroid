@@ -32,6 +32,7 @@ import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player_component.BR
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ActivityPlayerBinding
+import com.xyoye.player_component.source.RestartSource
 import dagger.hilt.android.AndroidEntryPoint
 import com.xyoye.player_component.utils.BatteryHelper
 import kotlinx.coroutines.Dispatchers
@@ -195,12 +196,16 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             }
 
             observerRestart {
+                dataBinding.danDanPlayer.recordPlayInfo()
                 setResult(Activity.RESULT_OK)
                 finish()
+                VideoSourceManager.getInstance().setSource(
+                    RestartSource.getRestartSource(dataBinding.danDanPlayer.getVideoSource(),
+                        dataBinding.danDanPlayer.getCurrentPosition())
+                )
                 ARouter.getInstance()
                     .build(RouteTable.Player.PlayerCenter)
                     .navigation()
-                finish()
             }
 
             //弹幕屏蔽
